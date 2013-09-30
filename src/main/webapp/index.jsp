@@ -3,7 +3,7 @@
 <%@ taglib tagdir="/WEB-INF/tags" prefix="t" %>
 <t:window title="Home">
     <jsp:attribute name="content">
-		<h1>PGAdmin</h1>
+		<h1>PostgreSQL Enterprise Manager</h1>
 		<p><i>by CAS10</i></p>
 	</jsp:attribute>
 </t:window>

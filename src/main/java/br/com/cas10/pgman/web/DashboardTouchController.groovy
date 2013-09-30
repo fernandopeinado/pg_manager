@@ -1,4 +1,4 @@
-package br.com.cas10.pgadmin.web
+package br.com.cas10.pgman.web
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller
@@ -8,22 +8,26 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 
-import br.com.cas10.pgadmin.agent.CpuAgent;
-import br.com.cas10.pgadmin.service.PostgresqlService;
+import br.com.cas10.pgman.service.PostgresqlService;
 
 @Controller
-@RequestMapping("/agent/cpu")
-class CpuAgentController {
+@RequestMapping("/dashboardTouch")
+class DashboardTouchController {
 	
 	@Autowired
-	private CpuAgent agent
+	private PostgresqlService service
 
 	@RequestMapping(method = RequestMethod.GET)
 	public String open(Model model) {
-		model.addAttribute("snapshots", agent.data)
-		return "agent/cpu";
+		return "dashboardTouch";
+	}
+
+	@RequestMapping(value="/auditStats", method = RequestMethod.GET)
+	public String auditStats(Model model) {
+		List<Map<String, Object>> stats = service.getAuditStats();
+		model.addAttribute("stats", stats);
+		return "auditStats";
 	}
 
 }

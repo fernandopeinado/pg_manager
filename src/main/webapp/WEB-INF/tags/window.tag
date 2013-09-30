@@ -19,7 +19,7 @@
 	<div class="navbar navbar-fixed-top">
 		<div class="navbar-inner">
 			<div class="container">
-				<a class="brand" href="#">PGAdmin</a>
+				<a class="brand" href="#">PGManger</a>
 				<ul class="nav">
 					<t:menu menuActive="${title}"></t:menu>
 				</ul>

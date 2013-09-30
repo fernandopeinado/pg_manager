@@ -1,9 +1,9 @@
-package br.com.cas10.pgadmin
+package br.com.cas10.pgman
 
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
-import br.com.cas10.pgadmin.service.ServiceConfig;
-import br.com.cas10.pgadmin.web.WebConfig;
+import br.com.cas10.pgman.service.ServiceConfig;
+import br.com.cas10.pgman.web.WebConfig;
 
 class WebAppInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
 

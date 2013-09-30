@@ -1,4 +1,4 @@
-package br.com.cas10.pgadmin.analitics
+package br.com.cas10.pgman.analitics
 
 import java.sql.Time;
 import java.sql.Timestamp;

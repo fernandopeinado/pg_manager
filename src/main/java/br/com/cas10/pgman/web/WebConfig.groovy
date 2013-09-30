@@ -1,4 +1,4 @@
-package br.com.cas10.pgadmin.web
+package br.com.cas10.pgman.web
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -10,7 +10,7 @@ import org.springframework.web.servlet.view.JstlView;
 
 @Configuration
 @EnableWebMvc
-@ComponentScan(basePackages=["br.com.cas10.pgadmin.web"])
+@ComponentScan(basePackages=["br.com.cas10.pgman.web"])
 class WebConfig extends WebMvcConfigurerAdapter {
 
 	@Bean

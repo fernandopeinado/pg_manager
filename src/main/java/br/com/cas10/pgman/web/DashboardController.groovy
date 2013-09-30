@@ -1,4 +1,4 @@
-package br.com.cas10.pgadmin.web
+package br.com.cas10.pgman.web
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller
@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import br.com.cas10.pgadmin.service.PostgresqlService;
+import br.com.cas10.pgman.service.PostgresqlService;
 
 @Controller
 @RequestMapping("/dashboard")

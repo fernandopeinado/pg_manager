@@ -1,4 +1,4 @@
-package br.com.cas10.pgadmin.service
+package br.com.cas10.pgman.service
 
 import java.beans.beancontext.BeanContext;
 
@@ -16,11 +16,11 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.transaction.annotation.EnableTransactionManagement
 
-import br.com.cas10.pgadmin.agent.AgentConfig;
-import br.com.cas10.pgadmin.analitics.Snapshots;
+import br.com.cas10.pgman.agent.AgentConfig;
+import br.com.cas10.pgman.analitics.Snapshots;
 
 @Configuration
-@ComponentScan(basePackages=["br.com.cas10.pgadmin.service"])
+@ComponentScan(basePackages=["br.com.cas10.pgman.service"])
 @Import(AgentConfig.class)
 @EnableTransactionManagement(proxyTargetClass = true)
 class ServiceConfig {
@@ -28,7 +28,7 @@ class ServiceConfig {
 	@Bean
 	DataSource dataSource() {
 		JndiTemplate jndi = new JndiTemplate();
-		return jndi.lookup("java:comp/env/jdbc/pgadmin", DataSource.class)
+		return jndi.lookup("java:comp/env/jdbc/pgman", DataSource.class)
 	}
 
 	@Bean

@@ -1,4 +1,4 @@
-package br.com.cas10.pgadmin.service
+package br.com.cas10.pgman.service
 
 import java.util.HashMap;
 

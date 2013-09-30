@@ -1,4 +1,4 @@
-package br.com.cas10.pgadmin.service
+package br.com.cas10.pgman.service
 
 import javax.annotation.PostConstruct;
 
@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Service;
 
-import br.com.cas10.pgadmin.agent.Agent;
+import br.com.cas10.pgman.agent.Agent;
 
 @Service
 class AgentsService {

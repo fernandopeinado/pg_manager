@@ -1,12 +1,12 @@
-package br.com.cas10.pgadmin.agent
+package br.com.cas10.pgman.agent
 
 import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import br.com.cas10.pgadmin.analitics.CircularList;
-import br.com.cas10.pgadmin.analitics.Snapshot;
-import br.com.cas10.pgadmin.analitics.Snapshots;
+import br.com.cas10.pgman.analitics.CircularList;
+import br.com.cas10.pgman.analitics.Snapshot;
+import br.com.cas10.pgman.analitics.Snapshots;
 
 abstract class Agent implements Runnable {
 	protected String type

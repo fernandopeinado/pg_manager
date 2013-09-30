@@ -1,4 +1,4 @@
-package br.com.cas10.pgadmin.analitics
+package br.com.cas10.pgman.analitics
 
 class CircularList<T> {
 
