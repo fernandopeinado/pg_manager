@@ -9,9 +9,13 @@ class Snapshots {
 	}
 	
 	synchronized CircularList<Snapshot> getStorage(String type) {
+		return getStorage(type, 300)
+	}
+	
+	synchronized CircularList<Snapshot> getStorage(String type, int size) {
 		CircularList<Snapshot> list = storage[type];
 		if (!list) {
-			list = buildList(300)
+			list = buildList(size)
 			storage[type] = list
 		}
 		return list

@@ -11,4 +11,9 @@ class AgentConfig {
 		return new CpuAgent();
 	}
 	
+	@Bean
+	MemoryAgent memoryAgent() {
+		return new MemoryAgent();
+	}
+	
 }

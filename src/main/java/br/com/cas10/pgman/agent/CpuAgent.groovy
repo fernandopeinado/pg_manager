@@ -13,7 +13,7 @@ class CpuAgent extends Agent {
 	private static final Pattern PATTERN = Pattern.compile("\\s+(\\d+)\\s(.*)")
 	
 	CpuAgent() {
-		super("cpu", 5000L)
+		super("cpu", 6000L, 300)
 	}
 	
 	@Override
@@ -62,15 +62,6 @@ class CpuAgent extends Agent {
 				deltaObs["wait_pc"] = deltaObs.wait * 100.0d / total
 				deltaObs["steal_pc"] = deltaObs.steal * 100.0d / total
 			}
-			println deltaObs
 		}
-	}
-	
-	static void main(String... args) {
-		CpuAgent agent = new CpuAgent()
-		agent.snapshots = new Snapshots()
-		agent.run()
-		Thread.sleep(1000L)
-		agent.run()
 	}
 }

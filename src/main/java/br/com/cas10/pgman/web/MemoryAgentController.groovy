@@ -10,19 +10,19 @@ import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import br.com.cas10.pgman.agent.MemoryAgent;
+import br.com.cas10.pgman.agent.CpuAgent;
 
 @Controller
-@RequestMapping("/agent/memory")
-class CpuAgentController {
+@RequestMapping("/agent/cpu")
+class MemoryAgentController {
 	
 	@Autowired
-	private MemoryAgent agent
+	private CpuAgent agent
 
 	@RequestMapping(method = RequestMethod.GET)
 	public String open(Model model) {
 		model.addAttribute("snapshots", agent.data)
-		return "agent/memory";
+		return "agent/cpu";
 	}
 
 }
