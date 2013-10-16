@@ -23,6 +23,10 @@
 	<script src="${contextPath}/js/bootstrap.js"></script>
 	<script src="${contextPath}/js/framework.js"></script>
 	<script src="${contextPath}/js/jqplot/jqplot.js"></script>
+	<script src="${contextPath}/js/jqplot/jqplot.logAxisRenderer.js"></script>
+	<script src="${contextPath}/js/jqplot/jqplot.canvasTextRenderer.js"></script>
+	<script src="${contextPath}/js/jqplot/jqplot.canvasAxisLabelRenderer.js"></script>
+	<script src="${contextPath}/js/jqplot/jqplot.canvasAxisTickRenderer.js"></script>
 	<script src="${contextPath}/js/jqplot/jqplot.dateAxisRenderer.js"></script>
 	<script src="${contextPath}/js/jqplot/jqplot.categoryAxisRenderer.js"></script>
 	<jsp:invoke fragment="scripts" />

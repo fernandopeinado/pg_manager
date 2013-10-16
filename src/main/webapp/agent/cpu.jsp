@@ -5,7 +5,7 @@
 <t:graph-portlet title="Dashboard">
 	<jsp:attribute name="content">
 		<div style="padding-left: 20px; padding-right: 150px">
-			<div id="cpu_chart_div" style="width: 100%; height: 240px;"></div>
+			<div id="cpu_chart_div" style="width: 100%; height: 280px;"></div>
 		</div>
 	</jsp:attribute>
 	<jsp:attribute name="scripts">
@@ -56,10 +56,16 @@
 			    	  	},
 			           	xaxis: {
 			            	renderer: $.jqplot.DateAxisRenderer,
-			            	tickOptions:{formatString:'%H:%M:%S'},
+			            	labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
+			                tickRenderer: $.jqplot.CanvasAxisTickRenderer,
+			                tickOptions: {
+			                    angle: 45,
+			                    formatString:'%H:%M:%S',
+			                    fontSize: '8pt'
+			                },
 			            	min: minTime, 
 			            	max: maxTime,
-			            	numberTicks: 15
+			            	numberTicks: 10
 			            	//tickInterval:'2 minutes'
 			           	}
 			       	},

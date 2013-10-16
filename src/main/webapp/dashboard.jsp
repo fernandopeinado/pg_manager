@@ -13,6 +13,15 @@
 				<iframe id="memory_graph" src="${contextPath}/ws/agent/memory" width="100%" height="340" seamless="seamless"></iframe>
 			</div>
 		</div>
+		
+		<div class="row">
+			<div class="span6">
+				<iframe id="cpu_graph" src="${contextPath}/ws/agent/cpu" width="100%" height="340" seamless="seamless"></iframe>
+			</div>
+			<div class="span6">
+				<iframe id="memory_graph" src="${contextPath}/ws/agent/memory" width="100%" height="340" seamless="seamless"></iframe>
+			</div>
+		</div>
     	<div class="row">
 			<div class="span6">
 				<div id="dash_1" data-load="${contextPath}/ws/dashboard/topDatabaseSizes/10"><!-- nt --></div>
