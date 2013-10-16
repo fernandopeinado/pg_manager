@@ -10,19 +10,25 @@ import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import br.com.cas10.pgman.agent.CpuAgent;
+import br.com.cas10.pgman.agent.MemoryAgent;
 
 @Controller
-@RequestMapping("/agent/cpu")
+@RequestMapping("/agent/memory")
 class MemoryAgentController {
 	
 	@Autowired
-	private CpuAgent agent
+	private MemoryAgent agent
 
 	@RequestMapping(method = RequestMethod.GET)
 	public String open(Model model) {
 		model.addAttribute("snapshots", agent.data)
-		return "agent/cpu";
+		return "agent/memory";
+	}
+
+	@RequestMapping(value="/refresh", method = RequestMethod.GET)
+	public String refresh(Model model) {
+		model.addAttribute("snapshots", agent.data)
+		return "agent/memoryFragment";
 	}
 
 }

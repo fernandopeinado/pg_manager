@@ -1,8 +1,5 @@
 package br.com.cas10.pgman.analitics
 
-import java.sql.Time;
-import java.sql.Timestamp;
-
 class Snapshot {
 	String type
 	long timestamp
@@ -24,8 +21,12 @@ class Snapshot {
 		return null;
 	}
 
+	String getTime() {
+		new java.sql.Time(timestamp);
+	}
+	
 	String getDateTime() {
-		new Time(timestamp);
+		new java.sql.Timestamp(timestamp);
 	}
 		
 	void postDeltas(Snapshot prev) {

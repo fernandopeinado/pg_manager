@@ -2,52 +2,85 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="t"%>
-<t:portlet title="Dashboard">
-    <jsp:attribute name="content">
-		<div id="cpu_chart_div" style="width: 100%; height: 320px;"></div>
+<t:graph-portlet title="Dashboard">
+	<jsp:attribute name="content">
+		<div style="padding-left: 20px; padding-right: 150px">
+			<div id="cpu_chart_div" style="width: 100%; height: 240px;"></div>
+		</div>
 	</jsp:attribute>
 	<jsp:attribute name="scripts">
 		<script type="text/javascript" src="https://www.google.com/jsapi"></script>
 		<script type="text/javascript">
-			google.load("visualization", "1", {
-				packages : [ "corechart" ]
-			});
-			google.setOnLoadCallback(drawChart);
-			function drawChart() {
-				var data = google.visualization.arrayToDataTable([
-						[ 'timestamp', 'User', 'System', 'Wait', 'Steal' ]
-						<c:forEach var="snap" items="${snapshots}">
-							<c:if test="${snap.deltaObs.user_pc != null}">
-								, [ '${snap.dateTime}', ${snap.deltaObs.user_pc}, ${snap.deltaObs.system_pc}, ${snap.deltaObs.wait_pc}, ${snap.deltaObs.steal_pc} ]
-							</c:if>
-						</c:forEach>
-						]);
-		
-				var options = {
-					isStacked : true,
-					hAxis : {
-						title : 'Time',
-						titleTextStyle : {
-							color : '#333',
-							fontSize : 1
+			var matrixData = [[ 'timestamp', 'User', 'System', 'Wait', 'Steal' ]
+				<c:forEach var="snap" items="${snapshots}">
+					<c:if test="${snap.deltaObs.user_pc != null}">
+						, [ '${snap.dateTime}', ${snap.deltaObs.user_pc}, ${snap.deltaObs.system_pc}, ${snap.deltaObs.wait_pc}, ${snap.deltaObs.steal_pc} ]
+					</c:if>
+				</c:forEach>
+			];
+			$(document).ready(function(){
+				var data = [];
+				var labels = [];
+				var minTime = matrixData[1][0];
+				var maxTime = matrixData[matrixData.length-1][0];
+				console.log(maxTime);
+				if (matrixData && matrixData[0]) {
+					var r, c, rows = cols = matrixData.length, cols = matrixData[0].length;
+					for (c = 1; c < cols; c++) {
+						labels[c-1] = { label: matrixData[0][c] };						
+					}
+					for (r = 1; r < rows; r++) {
+						for (c = 1; c < cols; c++) {
+							if (!data[c-1]) {
+								data[c-1] = [];
+							}
+							data[c-1][r-1] = [matrixData[r][0], matrixData[r][c]];
 						}
-					},
-					vAxis : {
-						title: "CPU (%)",
-						minValue : 0
-					},
-					lineWidth : 0,
-					areaOpacity : 1,
-					series : [ {color: '#33CC33'},{color: '#FFFF4D'}, {color: '#FF3333'}, {color: '#99CCFF'} ]
-				};
-		
-				var chart = new google.visualization.AreaChart(document
-						.getElementById('cpu_chart_div'));
-				chart.draw(data, options);
-			}
+					} 
+				}
+				console.dir(data);
+			    var plot1b = $.jqplot('cpu_chart_div',data,{
+			    	seriesColors: [ "#33CC33", "#FFFF4D", "#FF3333", "#99CCFF" ],
+					stackSeries: true,
+			       	showMarker: false,
+			       	seriesDefaults: {
+			       		shadow: false,
+						fill: true
+			       	},
+			       	series: labels,
+			       	axes: {
+			    		yaxis: {
+			    			min: 0, 
+			            	max: 100,
+			            	tickInterval: 10
+			    	  	},
+			           	xaxis: {
+			            	renderer: $.jqplot.DateAxisRenderer,
+			            	tickOptions:{formatString:'%H:%M:%S'},
+			            	min: minTime, 
+			            	max: maxTime,
+			            	numberTicks: 15
+			            	//tickInterval:'2 minutes'
+			           	}
+			       	},
+			       	title: {
+			       		text: 'CPU'
+			       	},
+			       	legend: {
+			            show: true,
+			            location: 'ne',
+			            placement: 'outside'
+			        },
+			        grid: {
+			        	drawBorder: false,
+			        	shadow: false,
+			        	background: '#FFFFFF',
+			        	gridLineColor: '#E5E5E5'
+			        }
+				});
+			});
 		</script>
 	</jsp:attribute>
-</t:portlet>
-
+</t:graph-portlet>
 
 
