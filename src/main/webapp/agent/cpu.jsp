@@ -19,27 +19,9 @@
 				</c:forEach>
 			];
 			$(document).ready(function(){
-				var data = [];
-				var labels = [];
-				var minTime = matrixData[1][0];
-				var maxTime = matrixData[matrixData.length-1][0];
-				console.log(maxTime);
-				if (matrixData && matrixData[0]) {
-					var r, c, rows = cols = matrixData.length, cols = matrixData[0].length;
-					for (c = 1; c < cols; c++) {
-						labels[c-1] = { label: matrixData[0][c] };						
-					}
-					for (r = 1; r < rows; r++) {
-						for (c = 1; c < cols; c++) {
-							if (!data[c-1]) {
-								data[c-1] = [];
-							}
-							data[c-1][r-1] = [matrixData[r][0], matrixData[r][c]];
-						}
-					} 
-				}
-				console.dir(data);
-			    var plot1b = $.jqplot('cpu_chart_div',data,{
+				
+				var cpu = framework.timedSeries.decompose(matrixData);
+			    var plot1b = $.jqplot('cpu_chart_div', cpu.data, {
 			    	seriesColors: [ "#33CC33", "#FFFF4D", "#FF3333", "#99CCFF" ],
 					stackSeries: true,
 			       	showMarker: false,
@@ -47,7 +29,7 @@
 			       		shadow: false,
 						fill: true
 			       	},
-			       	series: labels,
+			       	series: cpu.labels,
 			       	axes: {
 			    		yaxis: {
 			    			min: 0, 
@@ -63,10 +45,9 @@
 			                    formatString:'%H:%M:%S',
 			                    fontSize: '8pt'
 			                },
-			            	min: minTime, 
-			            	max: maxTime,
+			            	min: cpu.minTime, 
+			            	max: cpu.maxTime,
 			            	numberTicks: 10
-			            	//tickInterval:'2 minutes'
 			           	}
 			       	},
 			       	title: {

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 import br.com.cas10.pgman.analitics.Snapshot;
 import br.com.cas10.pgman.analitics.Snapshots;
 
+@Component
 class MemoryAgent extends Agent {
 
 	private static final Pattern PATTERN = Pattern.compile("\\s+(\\d+)\\s(.*)")
@@ -27,7 +28,7 @@ class MemoryAgent extends Agent {
 				String obs = matcher.group(2)
 				Long value = Long.valueOf(matcher.group(1))
 				if (obs == "K total memory") {
-					s.observations["total"] = value
+					s.observations["total"] = value 
 				}
 				else if (obs == "K free memory") {
 					s.observations["free"] = value

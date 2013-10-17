@@ -25,10 +25,4 @@ class MemoryAgentController {
 		return "agent/memory";
 	}
 
-	@RequestMapping(value="/refresh", method = RequestMethod.GET)
-	public String refresh(Model model) {
-		model.addAttribute("snapshots", agent.data)
-		return "agent/memoryFragment";
-	}
-
 }

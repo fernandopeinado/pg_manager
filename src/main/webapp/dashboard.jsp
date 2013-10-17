@@ -13,13 +13,9 @@
 				<iframe id="memory_graph" src="${contextPath}/ws/agent/memory" width="100%" height="340" seamless="seamless"></iframe>
 			</div>
 		</div>
-		
-		<div class="row">
-			<div class="span6">
-				<iframe id="cpu_graph" src="${contextPath}/ws/agent/cpu" width="100%" height="340" seamless="seamless"></iframe>
-			</div>
-			<div class="span6">
-				<iframe id="memory_graph" src="${contextPath}/ws/agent/memory" width="100%" height="340" seamless="seamless"></iframe>
+    	<div class="row">
+			<div class="span12">
+				<iframe id="databaseStats_graph" src="${contextPath}/ws/agent/databaseStats" width="100%" height="1360" seamless="seamless"></iframe>
 			</div>
 		</div>
     	<div class="row">
@@ -53,6 +49,7 @@
 		function refreshCPU() {
 			$("#cpu_graph")[0].contentWindow.location.reload();
 			$("#memory_graph")[0].contentWindow.location.reload();
+			$("#databaseStats_graph")[0].contentWindow.location.reload();
 			setTimeout(refreshCPU, 60000);
 		}
 		

@@ -1,19 +1,11 @@
 package br.com.cas10.pgman.agent
 
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
+@ComponentScan(basePackages=["br.com.cas10.pgman.agent"])
 class AgentConfig {
-
-	@Bean
-	CpuAgent cpuAgent() {
-		return new CpuAgent();
-	}
-	
-	@Bean
-	MemoryAgent memoryAgent() {
-		return new MemoryAgent();
-	}
 	
 }

@@ -4,6 +4,5 @@
 	<ul class="dropdown-menu">
 		<li role="presentation"><a role="menuitem" tabindex="-1" href="${contextPath}">Home</a></li>
 		<li role="presentation"><a role="menuitem" tabindex="-1" href="${contextPath}/ws/dashboard">Dashboard</a></li>
-		<li role="presentation"><a role="menuitem" tabindex="-1" href="${contextPath}/ws/dashboardTouch">Touch</a></li>
 	</ul>
 </li>

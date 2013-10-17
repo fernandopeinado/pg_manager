@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 import br.com.cas10.pgman.analitics.Snapshot;
 import br.com.cas10.pgman.analitics.Snapshots;
 
+@Component
 class CpuAgent extends Agent {
 
 	private static final Pattern PATTERN = Pattern.compile("\\s+(\\d+)\\s(.*)")

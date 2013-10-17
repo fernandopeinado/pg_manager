@@ -11,18 +11,18 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import br.com.cas10.pgman.agent.CpuAgent;
+import br.com.cas10.pgman.agent.DatabaseStatsAgent;
 
 @Controller
-@RequestMapping("/agent/cpu")
-class CpuAgentController {
+@RequestMapping("/agent/databaseStats")
+class DatabaseStatsAgentController {
 	
 	@Autowired
-	private CpuAgent agent
+	private DatabaseStatsAgent agent
 
 	@RequestMapping(method = RequestMethod.GET)
 	public String open(Model model) {
 		model.addAttribute("snapshots", agent.data)
-		return "agent/cpu";
+		return "agent/databaseStats";
 	}
-
 }

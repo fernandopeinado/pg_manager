@@ -15,33 +15,15 @@
 			var matrixData = [[ 'timestamp', 'Used', 'Buffer', 'Cache' ]
 				<c:forEach var="snap" items="${snapshots}">
 					<c:if test="${snap.deltaObs.used != null}">
-						, [ '${snap.dateTime}', ${snap.observations.used}, ${snap.observations.buffer}, ${snap.observations.cache} ]
+						, [ '${snap.dateTime}', ${snap.observations.used/1024}, ${snap.observations.buffer/1024}, ${snap.observations.cache/1024} ]
 					</c:if>
 				</c:forEach> ];
-			var totalMemory = ${snapshots[0].observations.total};
+			var totalMemory = ${snapshots[0].observations.total/1024};
 			
 			$(document).ready(function(){
-				var data = [];
-				var labels = [];
-				var minTime = matrixData[1][0];
-				var maxTime = matrixData[matrixData.length-1][0];
-				console.log(maxTime);
-				if (matrixData && matrixData[0]) {
-					var r, c, rows = cols = matrixData.length, cols = matrixData[0].length;
-					for (c = 1; c < cols; c++) {
-						labels[c-1] = { label: matrixData[0][c] };						
-					}
-					for (r = 1; r < rows; r++) {
-						for (c = 1; c < cols; c++) {
-							if (!data[c-1]) {
-								data[c-1] = [];
-							}
-							data[c-1][r-1] = [matrixData[r][0], matrixData[r][c]];
-						}
-					} 
-				}
-				console.dir(data);
-			    var plot1b = $.jqplot('mem_chart_div',data,{
+				
+				var memory = framework.timedSeries.decompose(matrixData);
+			    var plot1b = $.jqplot('mem_chart_div', memory.data, {
 			    	seriesColors: [ '#009900', '#1FFF00', '#B6FFC4', '#CCCCCC' ],
 					stackSeries: true,
 			       	showMarker: false,
@@ -49,7 +31,7 @@
 			       		shadow: false,
 						fill: true
 			       	},
-			       	series: labels,
+			       	series: memory.labels,
 			       	axes: {
 			    		yaxis: {
 			    			min: 0,
@@ -65,8 +47,8 @@
 			                    formatString:'%H:%M:%S',
 			                    fontSize: '8pt'
 			                },
-			            	min: minTime, 
-			            	max: maxTime,
+			            	min: memory.minTime, 
+			            	max: memory.maxTime,
 			            	numberTicks: 10
 			           	}
 			       	},
