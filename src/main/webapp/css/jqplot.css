@@ -23,6 +23,7 @@
 
 .jqplot-yaxis {
     margin-right: 10px;
+    min-width: 50px;
 }
 
 .jqplot-y2axis, .jqplot-y3axis, .jqplot-y4axis, .jqplot-y5axis, .jqplot-y6axis, .jqplot-y7axis, .jqplot-y8axis, .jqplot-y9axis, .jqplot-yMidAxis {
