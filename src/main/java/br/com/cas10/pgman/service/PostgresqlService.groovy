@@ -21,27 +21,38 @@ class PostgresqlService {
 	}
 
 	public List<Map<String,Object>> getTopRelationSizes(Integer top) {
-		if (!top) top = 20;
+		String topClause = "";
+		Map params = new HashMap<String, Object>();
+		if (top != null && top > 0) {
+			topClause = "LIMIT :top"
+			params["top"] = top;
+		};
 		String query = """
 			SELECT nspname || '.' || relname AS "relation"
 				, pg_size_pretty(pg_relation_size(C.oid)) AS "size"
 		  	FROM pg_class C
 		  		LEFT JOIN pg_namespace N ON (N.oid = C.relnamespace)
 		  	WHERE nspname NOT IN ('pg_catalog', 'information_schema')
+				AND pg_relation_size(C.oid) > 0
 		  	ORDER BY pg_relation_size(C.oid) DESC
-		  	LIMIT :top
+		  	${topClause}
 			"""
-		List<Map<String,Object>> result = jdbc.queryForList(query, ["top":top]);
+		List<Map<String,Object>> result = jdbc.queryForList(query, params);
 		return result;
 	}
 
 	public List<Map<String,Object>> getTopDatabaseSizes(Integer top) {
-		if (!top) top = 20;
+		String topClause = "";
+		Map params = new HashMap<String, Object>();
+		if (top != null && top > 0) {
+			topClause = "LIMIT :top"
+			params["top"] = top;
+		};
 		String query = """
 			SELECT datname as dbname, pg_size_pretty(pg_database_size(datname)) AS size 
 			FROM pg_database 
 			ORDER BY pg_database_size(datname) DESC
-			LIMIT :top
+			${topClause}
 			"""
 		List<Map<String,Object>> result = jdbc.queryForList(query, ["top":top]);
 		return result;

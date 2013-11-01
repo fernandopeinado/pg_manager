@@ -15,7 +15,7 @@
 <link href="${contextPath}/css/bootstrap-responsive.css" rel="stylesheet">
 <jsp:invoke fragment="styles" />
 </head>
-<body data-contextpath="${contextPath}">
+<body data-contextpath="${contextPath}" style="padding-left: 0px; padding-right: 0px;">
 	<jsp:invoke fragment="content" />
 	<script src="${contextPath}/js/jquery.js"></script>
 	<script src="${contextPath}/js/bootstrap.js"></script>

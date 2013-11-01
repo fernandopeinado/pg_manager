@@ -6,4 +6,5 @@
 *.war
 *.ear
 *.orig
+rebel.xml
 /target
