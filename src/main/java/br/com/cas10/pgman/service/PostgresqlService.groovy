@@ -13,14 +13,21 @@ import org.springframework.transaction.annotation.Transactional
 @Transactional
 class PostgresqlService {
 
-	private NamedParameterJdbcTemplate jdbc;
+	private NamedParameterJdbcTemplate jdbc
 
+	@Autowired
+	private DatabaseService databaseService
+	
 	@Autowired
 	public void setDataSource(DataSource dataSource) {
 		jdbc = new NamedParameterJdbcTemplate(dataSource);
 	}
 
-	public List<Map<String,Object>> getTopRelationSizes(Integer top) {
+	public List<Map<String,Object>> getTopRelationSizes(Integer top, String database) {
+		NamedParameterJdbcTemplate tmpl = jdbc
+		if (database != null) {
+			tmpl = databaseService.getTemplateForDb(database);
+		}
 		String topClause = "";
 		Map params = new HashMap<String, Object>();
 		if (top != null && top > 0) {
@@ -37,7 +44,7 @@ class PostgresqlService {
 		  	ORDER BY pg_relation_size(C.oid) DESC
 		  	${topClause}
 			"""
-		List<Map<String,Object>> result = jdbc.queryForList(query, params);
+		List<Map<String,Object>> result = tmpl.queryForList(query, params);
 		return result;
 	}
 

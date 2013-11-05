@@ -2,13 +2,13 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="t"%>
-
 <t:graph-portlet title="Dashboard">
 	<jsp:attribute name="content">
 		<div style="padding-left: 20px; padding-right: 150px">
 			<div id="commit_chart_div" style="width: 100%; height: 150px;"></div>
 			<div id="rollback_chart_div" style="width: 100%; height: 150px; margin-top: 20px"></div>
 			<div id="blksread_chart_div" style="width: 100%; height: 150px; margin-top: 20px"></div>
+			<div id="blkshit_chart_div" style="width: 100%; height: 150px; margin-top: 20px"></div>
 			<div id="tupreturned_chart_div" style="width: 100%; height: 150px; margin-top: 20px"></div>
 			<div id="tupfetched_chart_div" style="width: 100%; height: 150px; margin-top: 20px"></div>
 			<div id="tupinserted_chart_div" style="width: 100%; height: 150px; margin-top: 20px"></div>
@@ -32,6 +32,11 @@
 			var blksreadMatrixData = [ [ 'timestamp' <c:forEach var="obs" items="${snapshots[0].observations}">, '${obs.key}'</c:forEach> ]
 			<c:forEach var="snap" items="${snapshots}">
 				, [ '${snap.dateTime}' <c:forEach var="delta" items="${snap.deltaObs}">, ${delta.value.blks_read_ps}</c:forEach> ]
+			</c:forEach> ];
+			
+			var blkshitMatrixData = [ [ 'timestamp' <c:forEach var="obs" items="${snapshots[0].observations}">, '${obs.key}'</c:forEach> ]
+			<c:forEach var="snap" items="${snapshots}">
+				, [ '${snap.dateTime}' <c:forEach var="delta" items="${snap.deltaObs}">, ${delta.value.blks_hit_ps}</c:forEach> ]
 			</c:forEach> ];
 
 			var tupreturnedMatrixData = [ [ 'timestamp' <c:forEach var="obs" items="${snapshots[0].observations}">, '${obs.key}'</c:forEach> ]
@@ -65,6 +70,7 @@
 				var commits = framework.timedSeries.decompose(commitMatrixData);
 				var rollbacks = framework.timedSeries.decompose(rollbackMatrixData);
 				var blksread = framework.timedSeries.decompose(blksreadMatrixData);
+				var blkshit = framework.timedSeries.decompose(blkshitMatrixData);
 				var tupreturned = framework.timedSeries.decompose(tupreturnedMatrixData);
 				var tupfetched = framework.timedSeries.decompose(tupfetchedMatrixData);
 				var tupinserted = framework.timedSeries.decompose(tupinsertedMatrixData);
@@ -74,6 +80,7 @@
 			    $.jqplot('commit_chart_div', commits.data, getConfig(commits, 'Commits / sec', true));
 			    $.jqplot('rollback_chart_div', rollbacks.data, getConfig(rollbacks, "Rollbacks / sec", false));
 			    $.jqplot('blksread_chart_div', blksread.data, getConfig(blksread, "Blocks Read / sec", false));
+			    $.jqplot('blkshit_chart_div', blkshit.data, getConfig(blkshit, "Blocks Hit / sec", false));
 			    $.jqplot('tupreturned_chart_div', tupreturned.data, getConfig(tupreturned, "Tuples Returned / sec", false));
 			    $.jqplot('tupfetched_chart_div', tupfetched.data, getConfig(tupfetched, "Tuples Fetched / sec", false));
 			    $.jqplot('tupinserted_chart_div', tupinserted.data, getConfig(tupinserted, "Tuples Inserted / sec", false));

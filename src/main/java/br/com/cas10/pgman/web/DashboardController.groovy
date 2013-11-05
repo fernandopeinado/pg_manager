@@ -1,5 +1,7 @@
 package br.com.cas10.pgman.web
 
+import groovy.transform.CompileStatic;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import br.com.cas10.pgman.service.PostgresqlService;
 
+@CompileStatic
 @Controller
 @RequestMapping("/dashboard")
 class DashboardController {
@@ -26,7 +29,13 @@ class DashboardController {
 
 	@RequestMapping(value="/topRelationSizes/{size}", method = RequestMethod.GET)
 	public String topRelationSizes(@PathVariable("size") Integer size, Model model) {
-		List<Map<String, Object>> topSizes = service.getTopRelationSizes(size);
+		List<Map<String, Object>> topSizes = service.getTopRelationSizes(size, null)
+		model.addAttribute("topSizes", topSizes);
+		return "topRelationSizes";
+	}
+	@RequestMapping(value="/topRelationSizes/{db}/{size}", method = RequestMethod.GET)
+	public String topRelationSizesByDB(@PathVariable("db") String db, @PathVariable("size") Integer size, Model model) {
+		List<Map<String, Object>> topSizes = service.getTopRelationSizes(size, db)
 		model.addAttribute("topSizes", topSizes);
 		return "topRelationSizes";
 	}

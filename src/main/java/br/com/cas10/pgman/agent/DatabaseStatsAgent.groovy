@@ -66,6 +66,9 @@ class DatabaseStatsAgent extends Agent {
 				if (currentMap['blks_read'] != null) {
 					deltaMap['blks_read_ps'] = (currentMap['blks_read'] - lastMap['blks_read']) / (double) interval
 				}
+				if (currentMap['blks_hit'] != null) {
+					deltaMap['blks_hit_ps'] = (currentMap['blks_hit'] - lastMap['blks_hit']) / (double) interval
+				}
 				if (currentMap['tup_returned'] != null) {
 					deltaMap['tup_returned_ps'] = (currentMap['tup_returned'] - lastMap['tup_returned']) / (double) interval
 				}
