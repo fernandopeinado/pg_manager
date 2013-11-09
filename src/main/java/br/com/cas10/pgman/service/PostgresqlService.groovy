@@ -36,7 +36,10 @@ class PostgresqlService {
 		};
 		String query = """
 			SELECT nspname || '.' || relname AS "relation"
-				, pg_size_pretty(pg_relation_size(C.oid)) AS "size"
+				, CASE WHEN reltype = 0
+					THEN pg_size_pretty(pg_total_relation_size(C.oid))		        
+					ELSE pg_size_pretty(pg_relation_size(C.oid))
+				  END AS "size"
 		  	FROM pg_class C
 		  		LEFT JOIN pg_namespace N ON (N.oid = C.relnamespace)
 		  	WHERE nspname NOT IN ('pg_catalog', 'information_schema')

@@ -27,22 +27,22 @@ class MemoryAgent extends Agent {
 			if (matcher.matches()) {
 				String obs = matcher.group(2)
 				Long value = Long.valueOf(matcher.group(1))
-				if (obs == "K total memory") {
+				if (obs.endsWith("total memory")) {
 					s.observations["total"] = value 
 				}
-				else if (obs == "K free memory") {
+				else if (obs.endsWith("free memory")) {
 					s.observations["free"] = value
 				}
-				else if (obs == "K buffer memory") {
+				else if (obs.endsWith("buffer memory")) {
 					s.observations["buffer"] = value
 				} 
-				else if (obs == "K swap cache") {
+				else if (obs.endsWith("swap cache")) {
 					s.observations["cache"] = value
 				}
-				else if (obs == "K total swap") {
+				else if (obs.endsWith("total swap")) {
 					s.observations["swap_total"] = value
 				}
-				else if (obs == "K swap cache") {
+				else if (obs.endsWith("swap cache")) {
 					s.observations["swap_used"] = value
 				}
 			}
