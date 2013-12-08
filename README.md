@@ -21,8 +21,9 @@ Application Environment
 
 server.xml: add Datasource Resource and configure 
 
-<GlobalNamingResources>
-  <Resource name="jdbc/pgman" auth="Container"
+<pre>
+  &lt;GlobalNamingResources&gt;
+    &lt;Resource name="jdbc/pgman" auth="Container"
           factory="org.apache.tomcat.jdbc.pool.DataSourceFactory"
           type="javax.sql.DataSource"
           driverClassName="org.postgresql.Driver"
@@ -35,17 +36,18 @@ server.xml: add Datasource Resource and configure
           validationQuery="SELECT 1"
           validationQueryTimeout="60"
           fairQueue="true"
-          />
+          /&gt;
 
-</GlobalNamingResources>
+  &lt;/GlobalNamingResources&gt;
 
-<Context docBase="/opt/deploy/pgman.war" path="/pgman" reloadable="false"/>
-
+  &lt;Context docBase="/opt/deploy/pgman.war" path="/pgman" reloadable="false"/&gt;
+</pre>
 
 context.xml: add datasource link
 
-<ResourceLink name="jdbc/pgman" global="jdbc/pgman" type="javax.sql.DataSource" />
-
+<pre>
+  &lt;ResourceLink name="jdbc/pgman" global="jdbc/pgman" type="javax.sql.DataSource" /&gt;
+</pre>
 
 
 PostgreSQL Environment
