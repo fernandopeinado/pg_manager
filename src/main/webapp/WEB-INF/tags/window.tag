@@ -27,7 +27,9 @@
 		</div>
 	</div>
 	<div class="container">
-		<legend>${title}</legend>
+		<c:if test="${not empty title}">
+			<legend>${title}</legend>
+		</c:if>
 		<jsp:invoke fragment="content" />
 	</div>
 	<script src="${contextPath}/js/jquery.js"></script>

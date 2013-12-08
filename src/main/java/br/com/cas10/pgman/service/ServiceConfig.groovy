@@ -2,9 +2,12 @@ package br.com.cas10.pgman.service
 
 import java.beans.beancontext.BeanContext;
 
+import br.com.cas10.pgman.worker.WorkerConfig;
+
 import javax.sql.DataSource
 
-import org.hibernate.ejb.HibernatePersistence
+import org.quartz.Scheduler;
+import org.quartz.impl.StdSchedulerFactory;
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Configuration
@@ -21,7 +24,7 @@ import br.com.cas10.pgman.analitics.Snapshots;
 
 @Configuration
 @ComponentScan(basePackages=["br.com.cas10.pgman.service"])
-@Import(AgentConfig.class)
+@Import([ AgentConfig.class, WorkerConfig.class ])
 @EnableTransactionManagement(proxyTargetClass = true)
 class ServiceConfig {
 
@@ -42,6 +45,11 @@ class ServiceConfig {
 		int threads = Math.ceil(Runtime.runtime.availableProcessors() / 2.0d)
 		taskScheduler.setPoolSize(threads)
 		return taskScheduler
+	}
+	
+	@Bean(initMethod="start", destroyMethod="shutdown")
+	Scheduler quartzScheduler() {
+		StdSchedulerFactory.getDefaultScheduler();
 	}
 	
 	@Bean

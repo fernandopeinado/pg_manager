@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 @Service
-@Transactional
+@Transactional(readOnly = true)
 class PostgresqlService {
 
 	private NamedParameterJdbcTemplate jdbc
@@ -39,7 +39,7 @@ class PostgresqlService {
 				, CASE WHEN reltype = 0
 					THEN pg_size_pretty(pg_total_relation_size(C.oid))		        
 					ELSE pg_size_pretty(pg_relation_size(C.oid))
-				  END AS "size"
+				END AS "size"
 		  	FROM pg_class C
 		  		LEFT JOIN pg_namespace N ON (N.oid = C.relnamespace)
 		  	WHERE nspname NOT IN ('pg_catalog', 'information_schema')
@@ -110,22 +110,8 @@ class PostgresqlService {
 		return result;
 	}
 	
+	@Transactional(readOnly = false)
 	public void resetStatementsStats() {
 		jdbc.queryForList("SELECT pg_stat_statements_reset()", new HashMap<String, Object>())
-	}
-	
-	public List<Map<String,Object>> getAuditStats() {
-		String query = """
-			SELECT ENTITYCLASSNAME AS ENTITY, 
-				COUNT(DISTINCT SERIALIZEDPROPERTIESCOMPRESSED) AS TOTAL, 
-				SUM(LENGTH(LO.DATA)) AS SIZE,
-				SUM(LENGTH(LO.DATA))/COUNT(DISTINCT SERIALIZEDPROPERTIESCOMPRESSED) AS AVG
-			FROM AUDI_AUDITENTRY A 
-				INNER JOIN PG_LARGEOBJECT LO ON A.SERIALIZEDPROPERTIESCOMPRESSED = LO.LOID
-			GROUP BY ENTITYCLASSNAME 
-			ORDER BY 3 DESC;
-			"""
-		List<Map<String,Object>> result = jdbc.queryForList(query, new HashMap<String, Object>());
-		return result;
 	}
 }

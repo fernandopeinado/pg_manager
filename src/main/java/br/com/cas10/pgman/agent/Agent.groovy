@@ -1,5 +1,7 @@
 package br.com.cas10.pgman.agent
 
+import groovy.util.logging.Log4j;
+
 import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +10,7 @@ import br.com.cas10.pgman.analitics.CircularList;
 import br.com.cas10.pgman.analitics.Snapshot;
 import br.com.cas10.pgman.analitics.Snapshots;
 
+@Log4j
 abstract class Agent implements Runnable {
 	protected String type
 	protected long interval
@@ -25,6 +28,8 @@ abstract class Agent implements Runnable {
 
 	@PostConstruct
 	private void initialize() {
+		long time = interval * storageSize / 60000
+		log.info("Agent $type - ${interval} milisec (${time} min) starting")
 		circList = snapshots.getStorage(type, storageSize);
 	}
 	

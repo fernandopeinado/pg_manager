@@ -20,12 +20,12 @@ class SystemController {
 	
 	@RequestMapping(method = RequestMethod.GET)
 	public String open(Model model) {
-		model.addAttribute("basicInfo", system.basicInfo)
-		model.addAttribute("processorInfo", system.processorInfo)
-		model.addAttribute("memoryInfo", system.memoryInfo)
-		model.addAttribute("networkInfo", system.networkInfo)
-		model.addAttribute("storageInfo", system.storageInfo)
-		model.addAttribute("sysctl", system.sysctl)
+		try { model.addAttribute("basicInfo", system.basicInfo) } catch (Exception e) { e.printStackTrace(); }
+		try { model.addAttribute("processorInfo", system.processorInfo)  } catch (Exception e) { e.printStackTrace(); }
+		try { model.addAttribute("memoryInfo", system.memoryInfo) } catch (Exception e) { e.printStackTrace(); }
+		try { model.addAttribute("networkInfo", system.networkInfo) } catch (Exception e) { e.printStackTrace(); }
+		try { model.addAttribute("storageInfo", system.storageInfo) } catch (Exception e) { e.printStackTrace(); }
+		try { model.addAttribute("sysctl", system.sysctl) } catch (Exception e) { e.printStackTrace(); }
 		return "system"
 	}
 	
