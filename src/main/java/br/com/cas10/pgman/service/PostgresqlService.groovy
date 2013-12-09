@@ -23,7 +23,7 @@ class PostgresqlService {
 		jdbc = new NamedParameterJdbcTemplate(dataSource);
 	}
 
-	public List<Map<String,Object>> getTopRelationSizes(Integer top, String database) {
+	public List<Map<String,Object>> getTopRelationSizes(Integer top, String database, boolean prettyPrint) {
 		NamedParameterJdbcTemplate tmpl = jdbc
 		if (database != null) {
 			tmpl = databaseService.getTemplateForDb(database);
@@ -34,11 +34,20 @@ class PostgresqlService {
 			topClause = "LIMIT :top"
 			params["top"] = top;
 		};
+	
+		String totalRelSize = "pg_size_pretty(pg_total_relation_size(C.oid))"
+		String relSize = "pg_size_pretty(pg_relation_size(C.oid))"
+		if (!prettyPrint) {
+			totalRelSize = "pg_total_relation_size(C.oid)"
+			relSize = "pg_relation_size(C.oid)"
+		}
+	
 		String query = """
-			SELECT nspname || '.' || relname AS "relation"
-				, CASE WHEN reltype = 0
-					THEN pg_size_pretty(pg_total_relation_size(C.oid))		        
-					ELSE pg_size_pretty(pg_relation_size(C.oid))
+			SELECT nspname || '.' || relname AS "relation",
+				reltype,
+				CASE WHEN reltype = 0
+					THEN ${totalRelSize}		        
+					ELSE ${relSize}
 				END AS "size"
 		  	FROM pg_class C
 		  		LEFT JOIN pg_namespace N ON (N.oid = C.relnamespace)

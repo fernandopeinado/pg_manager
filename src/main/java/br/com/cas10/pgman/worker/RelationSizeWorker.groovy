@@ -16,25 +16,25 @@ import br.com.cas10.pgman.service.PostgresqlService;
 
 @Component
 @Log4j
-class DatabaseSizeWorker extends Worker {
+class RelationSizeWorker extends Worker {
 
 	private static final Pattern PATTERN = Pattern.compile("\\s+(\\d+)\\s(.*)")
 
 	@Autowired
 	private PGManagerDAO pgmanagerDAO;
 
-	DatabaseSizeWorker() {
-		super("databaseSize", "0 0 0 * * ?")
+	RelationSizeWorker() {
+		super("relationSize", "0 0 0 * * ?")
 	}
 
 	@Override
 	public void run() {
-		log.info("Database Size Worker - Running")
-		pgmanagerDAO.updateDbSizes()
+		log.info("Relation Size Worker - Running")
+		pgmanagerDAO.updateRelationSizes()
 	}
 	
 	@Override
 	public void clean() {
-		pgmanagerDAO.cleanDbSizes(30)
+		pgmanagerDAO.cleanRelationSizes(30)
 	}
 }

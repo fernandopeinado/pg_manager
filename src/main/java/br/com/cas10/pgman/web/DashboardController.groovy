@@ -29,13 +29,14 @@ class DashboardController {
 
 	@RequestMapping(value="/topRelationSizes/{size}", method = RequestMethod.GET)
 	public String topRelationSizes(@PathVariable("size") Integer size, Model model) {
-		List<Map<String, Object>> topSizes = service.getTopRelationSizes(size, null)
+		List<Map<String, Object>> topSizes = service.getTopRelationSizes(size, null, true)
 		model.addAttribute("topSizes", topSizes);
 		return "topRelationSizes";
 	}
+	
 	@RequestMapping(value="/topRelationSizes/{db}/{size}", method = RequestMethod.GET)
 	public String topRelationSizesByDB(@PathVariable("db") String db, @PathVariable("size") Integer size, Model model) {
-		List<Map<String, Object>> topSizes = service.getTopRelationSizes(size, db)
+		List<Map<String, Object>> topSizes = service.getTopRelationSizes(size, db, true)
 		model.addAttribute("topSizes", topSizes);
 		return "topRelationSizes";
 	}

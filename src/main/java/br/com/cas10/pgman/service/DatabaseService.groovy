@@ -27,7 +27,7 @@ class DatabaseService {
 
 	@PostConstruct
 	public void initDatabases() {
-		String query = "SELECT datname as dbname FROM pg_database"
+		String query = "SELECT datname as dbname FROM pg_database WHERE datistemplate = false"
 		List<Map<String,Object>> result = jdbc.queryForList(query, Collections.emptyMap())
 		result.each { 
 			PGPoolingDataSource ds = new PGPoolingDataSource()
@@ -40,5 +40,9 @@ class DatabaseService {
 	
 	public NamedParameterJdbcTemplate getTemplateForDb(String name) {
 		return new NamedParameterJdbcTemplate(databaseConnections[name])
+	}
+	
+	public Collection<String> getDatabases() {
+		this.databaseConnections.keySet()
 	}
 }
