@@ -27,27 +27,6 @@ class DashboardController {
 		return "dashboard";
 	}
 
-	@RequestMapping(value="/topRelationSizes/{size}", method = RequestMethod.GET)
-	public String topRelationSizes(@PathVariable("size") Integer size, Model model) {
-		List<Map<String, Object>> topSizes = service.getTopRelationSizes(size, null, true)
-		model.addAttribute("topSizes", topSizes);
-		return "topRelationSizes";
-	}
-	
-	@RequestMapping(value="/topRelationSizes/{db}/{size}", method = RequestMethod.GET)
-	public String topRelationSizesByDB(@PathVariable("db") String db, @PathVariable("size") Integer size, Model model) {
-		List<Map<String, Object>> topSizes = service.getTopRelationSizes(size, db, true)
-		model.addAttribute("topSizes", topSizes);
-		return "topRelationSizes";
-	}
-
-	@RequestMapping(value="/topDatabaseSizes/{size}", method = RequestMethod.GET)
-	public String topDatabaseSizes(@PathVariable("size") Integer size, Model model) {
-		List<Map<String, Object>> topSizes = service.getTopDatabaseSizes(size);
-		model.addAttribute("topSizes", topSizes);
-		return "topDatabaseSizes";
-	}
-	
 	@RequestMapping(value="/databaseStats", method = RequestMethod.GET)
 	public String databaseStats(Model model) {
 		List<Map<String, Object>> stats = service.getDatabaseStats();

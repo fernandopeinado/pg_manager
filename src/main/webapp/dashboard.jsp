@@ -25,11 +25,9 @@
 		</div>
     	<div class="row">
 			<div class="span6">
-				<iframe id="datsize_dash" src="${contextPath}/ws/dashboard/topDatabaseSizes/-1" style="height: 340px; width: 100%; padding-bottom: 20px"  seamless="seamless"></iframe>
-			</div>
-			<div class="span6">
 				<iframe id="cache_dash" src="${contextPath}/ws/dashboard/cacheStats" style="height: 340px; width: 100%; padding-bottom: 20px"  seamless="seamless"></iframe>
 			</div>
+			<div class="span6"><!-- not --></div>
 		</div>
 		<div class="row">
 			<div class="span12">

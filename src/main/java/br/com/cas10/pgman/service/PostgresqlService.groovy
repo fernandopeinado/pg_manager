@@ -23,37 +23,41 @@ class PostgresqlService {
 		jdbc = new NamedParameterJdbcTemplate(dataSource);
 	}
 
-	public List<Map<String,Object>> getTopRelationSizes(Integer top, String database, boolean prettyPrint) {
+	public List<Map<String,Object>> getTopRelationSizes(Integer top, String database, Long threshouldSizeBytes) {
 		NamedParameterJdbcTemplate tmpl = jdbc
 		if (database != null) {
 			tmpl = databaseService.getTemplateForDb(database);
 		}
-		String topClause = "";
+		
 		Map params = new HashMap<String, Object>();
+		if (threshouldSizeBytes == null) {
+			threshouldSizeBytes = 0;
+		}
+		params["threshouldSizeBytes"] = threshouldSizeBytes
+		
+		String topClause = "";
 		if (top != null && top > 0) {
 			topClause = "LIMIT :top"
 			params["top"] = top;
 		};
 	
-		String totalRelSize = "pg_size_pretty(pg_total_relation_size(C.oid))"
-		String relSize = "pg_size_pretty(pg_relation_size(C.oid))"
-		if (!prettyPrint) {
-			totalRelSize = "pg_total_relation_size(C.oid)"
-			relSize = "pg_relation_size(C.oid)"
-		}
-	
 		String query = """
-			SELECT nspname || '.' || relname AS "relation",
-				reltype,
-				CASE WHEN reltype = 0
-					THEN ${totalRelSize}		        
-					ELSE ${relSize}
-				END AS "size"
-		  	FROM pg_class C
-		  		LEFT JOIN pg_namespace N ON (N.oid = C.relnamespace)
-		  	WHERE nspname NOT IN ('pg_catalog', 'information_schema')
-				AND pg_relation_size(C.oid) > 0
-		  	ORDER BY pg_relation_size(C.oid) DESC
+			SELECT * FROM (
+				SELECT nspname || '.' || relname AS "relation",
+					reltype,
+					CASE WHEN reltype = 0
+						THEN pg_size_pretty(pg_total_relation_size(C.oid))	        
+						ELSE pg_size_pretty(pg_relation_size(C.oid))
+					END AS "size",
+					CASE WHEN reltype = 0
+						THEN pg_total_relation_size(C.oid)	        
+						ELSE pg_relation_size(C.oid)
+					END AS sizebytes
+			  	FROM pg_class C
+			  		LEFT JOIN pg_namespace N ON (N.oid = C.relnamespace)
+			  	WHERE nspname NOT IN ('pg_catalog', 'information_schema')
+			) AS X WHERE X.sizeBytes > :threshouldSizeBytes
+		  	ORDER BY X.sizeBytes DESC
 		  	${topClause}
 			"""
 		List<Map<String,Object>> result = tmpl.queryForList(query, params);

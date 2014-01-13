@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="t"%>
-<t:portlet title="Top Relation Sizes">
+<t:window title="Top Relation Sizes">
 	<jsp:attribute name="content">
 	<table id="dbSizes" class="table table-striped table-condensed">
 		<caption>Top Database Sizes</caption>
@@ -9,6 +9,7 @@
 			<tr>
 				<th>Database</th>
 				<th>Size</th>
+				<th>History</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -16,6 +17,7 @@
 				<tr>
 					<td><a data-bind="databaseOpen" data-database="${database['dbname']}">${database["dbname"]}</a></td>
 					<td>${database["size"]}</td>
+					<td>${topSizesHist[database['dbname']]}</td>
 				</tr>
 			</c:forEach>
 		</tbody>
@@ -33,7 +35,7 @@
 			databaseOpen : {
 				click : function(args) {
 					$.ajax({
-						url : framework.getUrl("ws/dashboard/topRelationSizes/" + args.database + "/-1"),
+						url : framework.getUrl("ws/database/size/topRelationSizes/" + args.database + "/-1"),
 						success: function (data) {
 							$("#modalLabel").html(args.database);
 							$("#body").html(data);
@@ -54,4 +56,4 @@
 	})();
 	</script>
 </jsp:attribute>
-</t:portlet>
+</t:window>
