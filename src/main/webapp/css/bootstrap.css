@@ -6203,3 +6203,7 @@ a.badge:focus {
 	filter: FlipH; 
 	-ms-filter: "FlipH";
 }
+
+iframe {
+	border: 0px;
+}

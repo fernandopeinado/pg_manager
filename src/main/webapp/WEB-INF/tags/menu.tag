@@ -6,5 +6,6 @@
 		<li role="presentation"><a role="menuitem" tabindex="-1" href="${contextPath}/ws/dashboard">Dashboard</a></li>
 		<li role="presentation"><a role="menuitem" tabindex="-1" href="${contextPath}/ws/database/size">Database Size</a></li>
 		<li role="presentation"><a role="menuitem" tabindex="-1" href="${contextPath}/ws/system">System</a></li>
+		<li role="presentation"><a role="menuitem" tabindex="-1" href="${contextPath}/ws/report">Report</a></li>
 	</ul>
 </li>
