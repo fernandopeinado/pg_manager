@@ -50,6 +50,15 @@ context.xml: add datasource link
 </pre>
 
 
+tomcat-users.xml
+
+<pre>
+&lt;tomcat-users&gt;
+	&lt;role rolename="pgman" /&gt;
+	&lt;user username="pgman" password="pgman" roles="pgman" /&gt;
+&lt;/tomcat-users&gt;
+</pre>
+
 PostgreSQL Environment
 ----------------------
 

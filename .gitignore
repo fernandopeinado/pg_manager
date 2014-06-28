@@ -8,3 +8,5 @@
 *.orig
 rebel.xml
 /target
+/bower_components/
+/README.md~
