@@ -1,49 +1,4 @@
-var framework = framework || 
-(function() {
-	function pageScript(config, containerSelector) {
-		if (config) {
-			for (bindName in config) {
-				var bindsFound = null;
-				if (containerSelector) {
-					bindsFound = $(containerSelector + ' [data-bind='+ bindName + ']');
-				}
-				else {
-					bindsFound = $('[data-bind='+ bindName + ']');
-				}
-				for (var eventName in config[bindName]) {
-					if (typeof config[bindName][eventName] == 'function') {
-						bindsFound.on(eventName, {method: config[bindName][eventName]}, methodCallback);
-					}
-				}
-			}
-		}
-		var dataLoads = $('div[data-load]');
-		var i = 0, size = dataLoads.length;
-		for (i = 0; i < size; i++) {
-			var url = $(dataLoads[i]).data().load;
-			$(dataLoads[i]).removeData("load");
-			$(dataLoads[i]).load(url);
-		}
-	}
-	
-	function methodCallback(event) {
-		var target = $(event.delegateTarget);
-		event.data.method(target.data(), target);
-	}
-	
-	function getUrl(url) {
-		var contextPath = $('body').data().contextpath;
-		if (contextPath) {
-			url = contextPath + "/" + url;
-		}
-		return url;
-	}
-	
-	return {
-		pageScript: pageScript,
-		getUrl: getUrl
-	};
-})();
+var framework = framework || {}
 
 framework.timedSeries = framework.timedSeries || 
 (function() {
@@ -76,7 +31,6 @@ framework.timedSeries = framework.timedSeries ||
 		var labels = [];
 		var minTime = matrix[1][0];
 		var maxTime = matrix[matrix.length-1][0];
-		console.log(maxTime);
 		if (matrix && matrix[0]) {
 			var r, c, rows = cols = matrix.length, cols = matrix[0].length;
 			for (c = 1; c < cols; c++) {
@@ -103,5 +57,32 @@ framework.timedSeries = framework.timedSeries ||
 
 	return {
 		decompose: decompose,
+	};
+})();
+
+framework.plotter = framework.plotter || 
+(function() {
+	
+	var graphs = {};
+	
+	function plot(target, data, plotFunction) {
+		destroyPlot(target);
+		if (data) {
+			graphs[target] = plotFunction(target, data);
+		}
+	}
+
+	function destroyPlot(target) {
+		if (graphs[target]) {
+			$('#' + target + ' *').unbind();
+			graphs[target].destroy();
+			$('#' + target).html('');
+		}
+	}
+	
+	return {
+		plot: plot,
+		destroyPlot: destroyPlot,
+		graphs: graphs
 	};
 })();

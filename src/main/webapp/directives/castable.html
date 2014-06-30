@@ -1,0 +1,13 @@
+<table class="table table-striped table-condensed">
+	<caption><div ng-transclude></div>{{title}}</caption>
+	<thead>
+		<tr>
+			<th ng-repeat="col in matrix[0] track by $index">{{col}}</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr ng-if="$index > 0" ng-repeat="row in matrix track by $index">
+			<td ng-repeat="td in row track by $index">{{td}}</td>
+		</tr>
+	</tbody>
+</table>
