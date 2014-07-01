@@ -3,7 +3,7 @@
 	var module = angular.module('cas10.pgman.dashboard', []);
 	
 	/* Dashboard */
-	module.controller('DashboardCtrl', function($scope, $window, $http) {
+	module.controller('DashboardCtrl', function($scope, $window, $http, $interval) {
 		$window.mainScope.currentView = 'Dashboard';
 		
 		// CPU
@@ -53,12 +53,16 @@
 			framework.plotter.plot('dashboard_stats_tupdeleted', $scope.graphTupdeleted, plotGraphStats);
 		});	
 		
-		$http.get('dashboard.groovy', {responseType:"json"})
-        .success(function(data, status) {
-        	for (prop in data) {
-        		$scope[prop] = data[prop];	
-        	}
-        });
+		$scope.refreshDashboard = function() {
+			$http.get('dashboard.groovy', {responseType:"json"})
+	        .success(function(data, status) {
+	        	for (prop in data) {
+	        		$scope[prop] = data[prop];	
+	        	}
+	        });
+			
+			$scope.refreshTopSql();
+		}
 
 		$scope.resetTopSql = function() {
 			$http.get('topsqlReset.groovy', {responseType:"json"})
@@ -77,7 +81,12 @@
 	        });
 		};
 		
-		$scope.refreshTopSql();
+		$scope.refreshDashboard();
+		
+		$interval(function() {
+			$scope.refreshDashboard();
+		}, 10000);
+
 	});
 
 	function plotGraphCPU(target, matrixData) {
