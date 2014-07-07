@@ -64,7 +64,6 @@ class PGManagerDAO {
 			}
 			dbSizes[row["database"]].add(row["size"])
 		}
-		println dbSizes;
 		return dbSizes
 	}
 	

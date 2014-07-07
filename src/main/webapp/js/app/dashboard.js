@@ -81,6 +81,21 @@
 	        });
 		};
 		
+		$scope.selectCacheRow = function(row, index) {
+			console.log(index);
+			console.log(row);
+		};
+		
+		$scope.selectDbSizesRow  = function(row, index) {
+			console.log(index);
+			console.log(row);
+		};
+		
+		$scope.selectTopSQLRow  = function(row, index) {
+			console.log(index);
+			console.log(row);
+		};
+		
 		$scope.refreshDashboard();
 		
 		$interval(function() {
@@ -230,4 +245,43 @@
 	        }
 		});
 	}
+
+	function plotSimpleAreaGraph(target, data) {
+	    return $.jqplot(target, [data], {
+	        grid: {
+	        	drawBorder: false,
+	        	shadow: false,
+	        	background: '#FFFFFF',
+	        	gridLineColor: '#E5E5E5'
+	        },
+	        axes: {
+		        xaxis: {
+		        	min: 1,
+		        	pad: 1,
+		        	showTicks: false  
+		        }
+	        }
+		});
+	};
+	
+	// DbSize Controller
+	
+	module.controller('DbSizeCtrl', function($scope, $routeParams, $http) {
+         $scope.database = $routeParams.database;
+         
+         $scope.$watch('history', function(newValue, oldValue) {
+        	 console.log(newValue);
+        	 if (newValue) {
+        		 framework.plotter.plot('history', $scope.history, plotSimpleAreaGraph);
+        	 }
+         });	
+         
+         $http.get('dbsize.groovy?database=' + $scope.database, {responseType:"json"})
+	        .success(function(data, status) {
+	        	for (prop in data) {
+	        		$scope[prop] = data[prop];	
+	        	}
+	        });
+    });
+	
 })();

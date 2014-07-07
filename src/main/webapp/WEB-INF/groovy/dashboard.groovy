@@ -1,10 +1,12 @@
-import org.springframework.web.context.ContextLoader;
+import groovy.json.JsonBuilder
 
-import br.com.cas10.pgman.agent.CpuAgent;
-import br.com.cas10.pgman.agent.DatabaseStatsAgent;
-import br.com.cas10.pgman.agent.MemoryAgent;
-import br.com.cas10.pgman.service.PostgresqlService;
-import groovy.json.JsonBuilder;
+import org.springframework.web.context.ContextLoader
+
+import br.com.cas10.pgman.agent.CpuAgent
+import br.com.cas10.pgman.agent.DatabaseStatsAgent
+import br.com.cas10.pgman.agent.MemoryAgent
+import br.com.cas10.pgman.service.PGManagerDAO
+import br.com.cas10.pgman.service.PostgresqlService
 
 /*
 request - the HttpServletRequest
@@ -87,12 +89,27 @@ Map getDatabaseStatsTableData() {
 	return ret
 }
 
+Map getDatabaseSizesData() {
+	PostgresqlService service = ContextLoader.currentWebApplicationContext.getBean(PostgresqlService.class)
+	def ret = [:]
+
+	List<Map<String, Object>> topSizes = service.getTopDatabaseSizes(-1);
+	def tableSizesMatrixData = []
+	tableSizesMatrixData << ['database', 'size']
+	topSizes.each { row -> 
+		tableSizesMatrixData << row.values() 
+	}
+	ret['dbSizes'] = ['title':'Database Sizes', 'matrixData': tableSizesMatrixData]
+	return ret
+}
+
 def resp = [
 	'graphCPU': getCPUData(),
 	'graphMemory': getMemoryData()
 ]
 resp.putAll(getDatabaseStatsData())
 resp.putAll(getDatabaseStatsTableData())
+resp.putAll(getDatabaseSizesData())
 out.println new JsonBuilder(resp).toString()
 
 

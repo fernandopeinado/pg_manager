@@ -7,8 +7,9 @@
 		restrict: 'E',
 		transclude: true,
 		scope: {
-			title: '=title',
-			matrix: '=matrix'
+			title: '=',
+			matrix: '=',
+			rowSelected: '='
 		},
 	    templateUrl: 'directives/castable.html'
 	  };

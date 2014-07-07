@@ -10,7 +10,7 @@
 				return "active";	
 			}
 			return "";
-		}
+		};
 	});
 
 	mainApp.controller('HomeCtrl', function($scope, $window) {
@@ -29,6 +29,9 @@
 		$routeProvider.when('/Home', {
 			templateUrl : 'home.html',
 			controller : 'HomeCtrl'
+		}).when('/Dashboard/DbSize/:database', {
+			templateUrl : 'dbsize.html',
+			controller : 'DbSizeCtrl'
 		}).when('/Dashboard', {
 			templateUrl : 'dashboard.html',
 			controller : 'DashboardCtrl'
