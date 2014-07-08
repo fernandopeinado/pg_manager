@@ -34,12 +34,16 @@ resp['size'] = (topSizes.find { row -> row.dbname == database })?.size
 resp['history'] = (topSizesHist.find { row -> row.key == database })?.value?.collect { it / (1024 * 1024) }
 
 
+def relationsOID = [0]
 def relationsMatrixData = []
-relationsMatrixData << ['relation', 'size']
+relationsMatrixData << ['table', 'size', 'index']
 tableSizes.each { row ->
-	relationsMatrixData << [row.relation, row.size] 
+	def prop = String.format("%3.1f", row.indexsizebytes * 100 / row.sizebytes) 
+	relationsMatrixData << [row.relation, row.size, "${row.indexsize} (${prop}%)" ]
+	relationsOID << row.oid
 }
 resp['relations'] = relationsMatrixData
+resp['oids'] = relationsOID
 
 out.println new JsonBuilder(resp).toString()
 

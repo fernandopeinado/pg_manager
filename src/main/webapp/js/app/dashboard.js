@@ -3,7 +3,7 @@
 	var module = angular.module('cas10.pgman.dashboard', []);
 	
 	/* Dashboard */
-	module.controller('DashboardCtrl', function($scope, $window, $http, $interval) {
+	module.controller('DashboardCtrl', function($scope, $window, $http, $interval, $location) {
 		$window.mainScope.currentView = 'Dashboard';
 		
 		// CPU
@@ -87,8 +87,7 @@
 		};
 		
 		$scope.selectDbSizesRow  = function(row, index) {
-			console.log(index);
-			console.log(row);
+			$location.path('/Dashboard/DbSize/' + row[0]);
 		};
 		
 		$scope.selectTopSQLRow  = function(row, index) {
@@ -266,7 +265,7 @@
 	
 	// DbSize Controller
 	
-	module.controller('DbSizeCtrl', function($scope, $routeParams, $http) {
+	module.controller('DbSizeCtrl', function($scope, $routeParams, $http, $location) {
          $scope.database = $routeParams.database;
          
          $scope.$watch('history', function(newValue, oldValue) {
@@ -276,6 +275,17 @@
         	 }
          });	
          
+         $scope.selectTableRow  = function(row, index) {
+        	 $http.get('dbsizeDetails.groovy?database=' + $scope.database + '&oid=' + $scope.oids[index], {responseType:"json"})
+	 	        .success(function(data, status) {
+	 	        	$scope.selected = {};
+	 	        	$scope.selected.name = row[0];
+	 	        	for (prop in data) {
+	 	        		$scope.selected[prop] = data[prop];	
+	 	        	}
+	 	        });
+ 		 };
+
          $http.get('dbsize.groovy?database=' + $scope.database, {responseType:"json"})
 	        .success(function(data, status) {
 	        	for (prop in data) {

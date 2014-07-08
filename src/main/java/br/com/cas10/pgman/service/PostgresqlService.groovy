@@ -42,28 +42,66 @@ class PostgresqlService {
 		};
 	
 		String query = """
-			SELECT * FROM (
-				SELECT nspname || '.' || relname AS "relation",
-					reltype,
-					CASE WHEN reltype = 0
-						THEN pg_size_pretty(pg_total_relation_size(C.oid))	        
-						ELSE pg_size_pretty(pg_relation_size(C.oid))
-					END AS "size",
-					CASE WHEN reltype = 0
-						THEN pg_total_relation_size(C.oid)	        
-						ELSE pg_relation_size(C.oid)
-					END AS sizebytes
-			  	FROM pg_class C
-			  		LEFT JOIN pg_namespace N ON (N.oid = C.relnamespace)
-			  	WHERE nspname NOT IN ('pg_catalog', 'information_schema')
-			) AS X WHERE X.sizeBytes > :threshouldSizeBytes
-		  	ORDER BY X.sizeBytes DESC
-		  	${topClause}
+			SELECT C.oid,
+				nspname || '.' || relname AS "relation",
+				pg_size_pretty(pg_total_relation_size(C.oid)) AS "size",
+				pg_total_relation_size(C.oid) AS sizebytes,
+				pg_size_pretty(pg_indexes_size(C.oid)) AS "indexsize",
+				pg_indexes_size(C.oid) AS indexsizebytes
+			FROM pg_class C
+				LEFT JOIN pg_namespace N ON (N.oid = C.relnamespace)
+			WHERE nspname NOT IN ('pg_catalog', 'information_schema')
+				AND C.relkind <> 'i'
+				AND nspname !~ '^pg_toast'
+				AND pg_total_relation_size(C.oid) > :threshouldSizeBytes
+			ORDER BY pg_total_relation_size(C.oid) DESC
+			${topClause}
 			"""
 		List<Map<String,Object>> result = tmpl.queryForList(query, params);
 		return result;
 	}
 
+	Map<String,Object> getTableDetails(Long oid, String database) {
+		Map<String,Object> result = [:]
+		NamedParameterJdbcTemplate tmpl = jdbc
+		if (database != null) {
+			tmpl = databaseService.getTemplateForDb(database);
+		}
+		
+		Map params = new HashMap<String, Object>();
+		params["oid"] = oid
+		
+		String query = """
+			SELECT c.relname AS index, 
+				pg_size_pretty(pg_relation_size(i.indexrelid)) AS size, 
+				i.indisunique as un, 
+				i.indisprimary as pk
+			FROM pg_index i
+				INNER JOIN pg_class c ON i.indexrelid = c.oid
+			WHERE indrelid = :oid
+			ORDER BY relname
+			"""
+		result['indexes'] = []
+		tmpl.queryForList(query, params).each { row ->
+			result['indexes'] << ['name' : row.index, 'size' : row.size, 'unique' : row.un, 'primaryKey' : row.pk]
+		}
+		
+		query = """
+			SELECT t.relname AS toast, pg_size_pretty(pg_relation_size(t.oid)) AS toastSize, 
+				ti.relname AS toastIndex, pg_size_pretty(pg_relation_size(ti.oid)) AS toastIndexSize
+			FROM pg_class c
+					INNER JOIN pg_class t on c.reltoastrelid = t.oid
+					LEFT JOIN pg_class ti on t.reltoastidxid = ti.oid
+			WHERE c.oid = :oid
+			"""
+		result['toasts'] = []
+		tmpl.queryForList(query, params).each { row ->
+			result['toasts'] << ['toast' : row.toast, 'toastSize' : row.toastSize, 'toastIndex' : row.toastIndex, 'toastIndexSize' : row.toastIndexSize]
+		}
+		
+		return result;
+	}
+	
 	public List<Map<String,Object>> getTopDatabaseSizes(Integer top) {
 		String topClause = "";
 		Map params = new HashMap<String, Object>();
