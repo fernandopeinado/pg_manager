@@ -45,9 +45,13 @@ List statRows(cols, snapshots, propName) {
 	def rows = []
 	rows.add(cols)
 	snapshots.each { snap ->
-		def row = [snap.dateTime]
-		snap.deltaObs.each { delta ->  row << delta.value[propName] }
-		rows << row
+		if (snap.deltaObs.size() > 0) {
+			def row = [snap.dateTime]
+			for (int i = 1; i < cols.size(); i++) {
+				row << snap.deltaObs[cols[i]][propName]
+			}
+			rows << row
+		}
 	}
 	return rows
 }

@@ -124,7 +124,7 @@ class PostgresqlService {
 			SELECT datname as database, numbackends, xact_commit, xact_rollback, blks_read, blks_hit, 
 				tup_returned, tup_fetched, tup_inserted, tup_updated, tup_deleted 
 			FROM pg_stat_database
-			WHERE xact_commit > 0 OR blks_read > 0
+			WHERE datname not like 'template%'
 			ORDER BY datname
 			"""
 		List<Map<String,Object>> result = jdbc.queryForList(query, new HashMap<String, Object>());
@@ -195,6 +195,52 @@ class PostgresqlService {
 			where indexrelid is null
 			order by 1"""
 		List<Map<String,Object>> result = tmpl.queryForList(query, new HashMap<String, Object>());
+		return result;
+	}
+	
+	public String getVersion() {
+		String query = """SELECT version() AS version"""
+		List<Map<String,Object>> result = jdbc.queryForList(query, [:]);
+		return result[0].version;
+	}
+	
+	public List<Map<String,Object>> getActivity() {
+		String query = 	"""
+			SELECT
+				pg_stat_activity.pid AS pid,
+				CASE WHEN LENGTH(pg_stat_activity.datname) > 16
+					THEN SUBSTRING(pg_stat_activity.datname FROM 0 FOR 6)||'...'||SUBSTRING(pg_stat_activity.datname FROM '........\$')
+					ELSE pg_stat_activity.datname
+					END
+				AS database,
+				pg_stat_activity.client_addr AS client,
+				EXTRACT(epoch FROM (NOW() - pg_stat_activity.query_start)) AS duration,
+				pg_stat_activity.waiting AS wait,
+				pg_stat_activity.usename AS user,
+				pg_stat_activity.query AS query
+			FROM
+				pg_stat_activity
+			WHERE
+				state <> 'idle'
+				AND pid <> pg_backend_pid()
+			ORDER BY
+				EXTRACT(epoch FROM (NOW() - pg_stat_activity.query_start)) DESC"""
+
+		List<Map<String,Object>> result = jdbc.queryForList(query, [:]);
+		return result;
+	}
+
+	public List<Map<String,Object>> getSettings() {
+		String query = 	"""
+			SELECT
+				name, setting, unit, category, short_desc, 
+				extra_desc, context, vartype, source, 
+				min_val, max_val, enumvals, boot_val, 
+				reset_val, sourcefile, sourceline
+			FROM pg_settings 
+			ORDER BY category, name"""
+
+		List<Map<String,Object>> result = jdbc.queryForList(query, [:]);
 		return result;
 	}
 	
