@@ -49,6 +49,7 @@ class SchedulerService {
 				.withSchedule(cronSchedule(worker.cron))
 				.build()
 		scheduler.scheduleJob(job, trigger)
+		worker.scheduled();
 	}
 	
 	public void doWork(String type) {

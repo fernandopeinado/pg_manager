@@ -101,7 +101,7 @@ Map getDatabaseSizesData() {
 	def tableSizesMatrixData = []
 	tableSizesMatrixData << ['database', 'size']
 	topSizes.each { row -> 
-		tableSizesMatrixData << row.values() 
+		tableSizesMatrixData << row.values()
 	}
 	ret['dbSizes'] = ['title':'Database Sizes', 'matrixData': tableSizesMatrixData]
 	return ret

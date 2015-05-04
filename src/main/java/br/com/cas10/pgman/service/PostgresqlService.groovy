@@ -1,47 +1,53 @@
 package br.com.cas10.pgman.service
 
-import java.util.HashMap;
-
 import javax.sql.DataSource
 
+import org.mapdb.BTreeMap;
+import org.mapdb.DB
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
+import br.com.cas10.pgman.domain.Database
+import br.com.cas10.pgman.utils.SizeUtils;
+
 @Service
 @Transactional(readOnly = true)
 class PostgresqlService {
 
-	private NamedParameterJdbcTemplate jdbc
+    private NamedParameterJdbcTemplate jdbc
 
-	@Autowired
-	private DatabaseService databaseService
-	
-	@Autowired
-	public void setDataSource(DataSource dataSource) {
-		jdbc = new NamedParameterJdbcTemplate(dataSource);
-	}
+    @Autowired
+    private DatabaseService databaseService
 
-	public List<Map<String,Object>> getTopRelationSizes(Integer top, String database, Long threshouldSizeBytes) {
-		NamedParameterJdbcTemplate tmpl = jdbc
-		if (database != null) {
-			tmpl = databaseService.getTemplateForDb(database);
-		}
-		
-		Map params = new HashMap<String, Object>();
-		if (threshouldSizeBytes == null) {
-			threshouldSizeBytes = 0;
-		}
-		params["threshouldSizeBytes"] = threshouldSizeBytes
-		
-		String topClause = "";
-		if (top != null && top > 0) {
-			topClause = "LIMIT :top"
-			params["top"] = top;
-		};
-	
-		String query = """
+    @Autowired
+    private DB mapDB;
+
+    @Autowired
+    public void setDataSource(DataSource dataSource) {
+        jdbc = new NamedParameterJdbcTemplate(dataSource);
+    }
+
+    public List<Map<String,Object>> getTopRelationSizes(Integer top, String database, Long threshouldSizeBytes) {
+        NamedParameterJdbcTemplate tmpl = jdbc
+        if (database != null) {
+            tmpl = databaseService.getTemplateForDb(database);
+        }
+
+        Map params = new HashMap<String, Object>();
+        if (threshouldSizeBytes == null) {
+            threshouldSizeBytes = 0;
+        }
+        params["threshouldSizeBytes"] = threshouldSizeBytes
+
+        String topClause = "";
+        if (top != null && top > 0) {
+            topClause = "LIMIT :top"
+            params["top"] = top;
+        };
+
+        String query = """
 			SELECT C.oid,
 				nspname || '.' || relname AS "relation",
 				pg_size_pretty(pg_total_relation_size(C.oid)) AS "size",
@@ -57,21 +63,21 @@ class PostgresqlService {
 			ORDER BY pg_total_relation_size(C.oid) DESC
 			${topClause}
 			"""
-		List<Map<String,Object>> result = tmpl.queryForList(query, params);
-		return result;
-	}
+        List<Map<String,Object>> result = tmpl.queryForList(query, params);
+        return result;
+    }
 
-	Map<String,Object> getTableDetails(Long oid, String database) {
-		Map<String,Object> result = [:]
-		NamedParameterJdbcTemplate tmpl = jdbc
-		if (database != null) {
-			tmpl = databaseService.getTemplateForDb(database);
-		}
-		
-		Map params = new HashMap<String, Object>();
-		params["oid"] = oid
-		
-		String query = """
+    Map<String,Object> getTableDetails(Long oid, String database) {
+        Map<String,Object> result = [:]
+        NamedParameterJdbcTemplate tmpl = jdbc
+        if (database != null) {
+            tmpl = databaseService.getTemplateForDb(database);
+        }
+
+        Map params = new HashMap<String, Object>();
+        params["oid"] = oid
+
+        String query = """
 			SELECT c.relname AS index, 
 				pg_size_pretty(pg_relation_size(i.indexrelid)) AS size, 
 				i.indisunique as un, 
@@ -81,12 +87,12 @@ class PostgresqlService {
 			WHERE indrelid = :oid
 			ORDER BY relname
 			"""
-		result['indexes'] = []
-		tmpl.queryForList(query, params).each { row ->
-			result['indexes'] << ['name' : row.index, 'size' : row.size, 'unique' : row.un, 'primaryKey' : row.pk]
-		}
-		
-		query = """
+        result['indexes'] = []
+        tmpl.queryForList(query, params).each { row ->
+            result['indexes'] << ['name' : row.index, 'size' : row.size, 'unique' : row.un, 'primaryKey' : row.pk]
+        }
+
+        query = """
 			SELECT t.relname AS toast, pg_size_pretty(pg_relation_size(t.oid)) AS toastSize, 
 				ti.relname AS toastIndex, pg_size_pretty(pg_relation_size(ti.oid)) AS toastIndexSize
 			FROM pg_class c
@@ -94,45 +100,40 @@ class PostgresqlService {
 					LEFT JOIN pg_class ti on t.reltoastidxid = ti.oid
 			WHERE c.oid = :oid
 			"""
-		result['toasts'] = []
-		tmpl.queryForList(query, params).each { row ->
-			result['toasts'] << ['toast' : row.toast, 'toastSize' : row.toastSize, 'toastIndex' : row.toastIndex, 'toastIndexSize' : row.toastIndexSize]
-		}
-		
-		return result;
-	}
-	
-	public List<Map<String,Object>> getTopDatabaseSizes(Integer top) {
-		String topClause = "";
-		Map params = new HashMap<String, Object>();
-		if (top != null && top > 0) {
-			topClause = "LIMIT :top"
-			params["top"] = top;
-		};
-		String query = """
-			SELECT datname as dbname, pg_size_pretty(pg_database_size(datname)) AS size 
-			FROM pg_database 
-			ORDER BY pg_database_size(datname) DESC
-			${topClause}
-			"""
-		List<Map<String,Object>> result = jdbc.queryForList(query, ["top":top]);
-		return result;
-	}
+        result['toasts'] = []
+        tmpl.queryForList(query, params).each { row ->
+            result['toasts'] << ['toast' : row.toast, 'toastSize' : row.toastSize, 'toastIndex' : row.toastIndex, 'toastIndexSize' : row.toastIndexSize]
+        }
 
-	public List<Map<String,Object>> getDatabaseStats() {
-		String query = """
-			SELECT datname as database, numbackends, xact_commit, xact_rollback, blks_read, blks_hit, 
-				tup_returned, tup_fetched, tup_inserted, tup_updated, tup_deleted 
-			FROM pg_stat_database
-			WHERE datname not like 'template%'
-			ORDER BY datname
-			"""
-		List<Map<String,Object>> result = jdbc.queryForList(query, new HashMap<String, Object>());
-		return result;
-	}
-	
-	public List<Map<String,Object>> getCacheStats() {
-		String query = """
+        return result;
+    }
+
+    public List<Map<String,Object>> getTopDatabaseSizes(Integer top) {
+        List<Map<String,Object>> result = new ArrayList<>();
+        BTreeMap<String, Database> databases = mapDB.getTreeMap("databases");
+        databases.values().each { Database database ->
+            result.add(["dbname": database.name, "size": database.prettyPrintSize, "_sizeBytes": database.size]);
+        }
+        Collections.sort(result, { Map<String,Object> o1, Map<String,Object> o2 ->
+                return -o1._sizeBytes.compareTo(o2._sizeBytes);
+            } as Comparator<Map<String,Object>>)
+        return result;
+    }
+
+    public List<Map<String,Object>> getDatabaseStats() {
+        String query = """
+            SELECT datname as database, numbackends, xact_commit, xact_rollback, blks_read, blks_hit, 
+                    tup_returned, tup_fetched, tup_inserted, tup_updated, tup_deleted 
+            FROM pg_stat_database
+            WHERE datname not like 'template%'
+            ORDER BY datname
+            """
+        List<Map<String,Object>> result = jdbc.queryForList(query, new HashMap<String, Object>());
+        return result;
+    }
+
+    public List<Map<String,Object>> getCacheStats() {
+        String query = """
 			SELECT datname as database, 
 				round(CAST(((xact_rollback::float * 100) / (xact_commit + xact_rollback))AS numeric),4) AS rollback_rate, 
 				round(CAST(((blks_hit::float * 100) / (blks_read + blks_hit))AS numeric),4) AS cache_rate 
@@ -140,33 +141,33 @@ class PostgresqlService {
 			WHERE (blks_read + blks_hit) > 0 AND (xact_commit + xact_rollback) > 0 
 			ORDER BY datname
 			"""
-		List<Map<String,Object>> result = jdbc.queryForList(query, new HashMap<String, Object>());
-		return result;
-	}
-	
-	public List<Map<String,Object>> getTopStatements(Integer top) {
-		if (!top) top = 20;
-		String query = """
+        List<Map<String,Object>> result = jdbc.queryForList(query, new HashMap<String, Object>());
+        return result;
+    }
+
+    public List<Map<String,Object>> getTopStatements(Integer top) {
+        if (!top) top = 20;
+        String query = """
 			SELECT DATNAME as DATABASE, 
 				CALLS,
 				round(TOTAL_TIME::numeric, 4) AS TOTAL_TIME,
 				round((TOTAL_TIME / CALLS)::numeric, 4) AS AVG_TIME, 
-				ROWS, QUERY 
+				ROWS, QUERY, BLK_READ_TIME, BLK_WRITE_TIME 
 			FROM PG_STAT_STATEMENTS S 
 				INNER JOIN PG_DATABASE D ON S.DBID = D.OID 
 			ORDER BY TOTAL_TIME DESC
 			LIMIT :top
 			"""
-		List<Map<String,Object>> result = jdbc.queryForList(query, ["top":top]);
-		return result;
-	}
-	
-	public List<Map<String, Object>> getMissingIndexesForForeignKeys(String database) {
-		NamedParameterJdbcTemplate tmpl = jdbc
-		if (database != null) {
-			tmpl = databaseService.getTemplateForDb(database);
-		}
-		String query = """select 'create index ' || relname || '_' ||
+        List<Map<String,Object>> result = jdbc.queryForList(query, ["top":top]);
+        return result;
+    }
+
+    public List<Map<String, Object>> getMissingIndexesForForeignKeys(String database) {
+        NamedParameterJdbcTemplate tmpl = jdbc
+        if (database != null) {
+            tmpl = databaseService.getTemplateForDb(database);
+        }
+        String query = """select 'create index ' || relname || '_' ||
 			         array_to_string(column_name_list, '_') || '_idx on ' || conrelid ||
 			         ' (' || array_to_string(column_name_list, ',') || ')' as command
 			from (select distinct
@@ -194,18 +195,18 @@ class PostgresqlService {
 			                      and indkey::text = array_to_string(column_list, ' ')
 			where indexrelid is null
 			order by 1"""
-		List<Map<String,Object>> result = tmpl.queryForList(query, new HashMap<String, Object>());
-		return result;
-	}
-	
-	public String getVersion() {
-		String query = """SELECT version() AS version"""
-		List<Map<String,Object>> result = jdbc.queryForList(query, [:]);
-		return result[0].version;
-	}
-	
-	public List<Map<String,Object>> getActivity() {
-		String query = 	"""
+        List<Map<String,Object>> result = tmpl.queryForList(query, new HashMap<String, Object>());
+        return result;
+    }
+
+    public String getVersion() {
+        String query = """SELECT version() AS version"""
+        List<Map<String,Object>> result = jdbc.queryForList(query, [:]);
+        return result[0].version;
+    }
+
+    public List<Map<String,Object>> getActivity() {
+        String query = 	"""
 			SELECT
 				pg_stat_activity.pid AS pid,
 				CASE WHEN LENGTH(pg_stat_activity.datname) > 16
@@ -226,12 +227,12 @@ class PostgresqlService {
 			ORDER BY
 				EXTRACT(epoch FROM (NOW() - pg_stat_activity.query_start)) DESC"""
 
-		List<Map<String,Object>> result = jdbc.queryForList(query, [:]);
-		return result;
-	}
+        List<Map<String,Object>> result = jdbc.queryForList(query, [:]);
+        return result;
+    }
 
-	public List<Map<String,Object>> getSettings() {
-		String query = 	"""
+    public List<Map<String,Object>> getSettings() {
+        String query = 	"""
 			SELECT
 				name, setting, unit, category, short_desc, 
 				extra_desc, context, vartype, source, 
@@ -240,12 +241,12 @@ class PostgresqlService {
 			FROM pg_settings 
 			ORDER BY category, name"""
 
-		List<Map<String,Object>> result = jdbc.queryForList(query, [:]);
-		return result;
-	}
-	
-	@Transactional(readOnly = false)
-	public void resetStatementsStats() {
-		jdbc.queryForList("SELECT pg_stat_statements_reset()", new HashMap<String, Object>())
-	}
+        List<Map<String,Object>> result = jdbc.queryForList(query, [:]);
+        return result;
+    }
+
+    @Transactional(readOnly = false)
+    public void resetStatementsStats() {
+        jdbc.queryForList("SELECT pg_stat_statements_reset()", new HashMap<String, Object>())
+    }
 }

@@ -6,6 +6,7 @@ import br.com.cas10.pgman.worker.WorkerConfig;
 
 import javax.sql.DataSource
 
+import org.mapdb.*;
 import org.quartz.Scheduler;
 import org.quartz.impl.StdSchedulerFactory;
 import org.springframework.context.annotation.Bean
@@ -28,32 +29,44 @@ import br.com.cas10.pgman.analitics.Snapshots;
 @EnableTransactionManagement(proxyTargetClass = true)
 class ServiceConfig {
 
-	@Bean
-	DataSource dataSource() {
-		JndiTemplate jndi = new JndiTemplate();
-		return jndi.lookup("java:comp/env/jdbc/pgman", DataSource.class)
-	}
+    @Bean
+    DataSource dataSource() {
+        JndiTemplate jndi = new JndiTemplate();
+        return jndi.lookup("java:comp/env/jdbc/pgman", DataSource.class)
+    }
 
-	@Bean
-	DataSourceTransactionManager transactionManager() {
-		return new DataSourceTransactionManager(dataSource())
-	}
+    @Bean
+    DataSourceTransactionManager transactionManager() {
+        return new DataSourceTransactionManager(dataSource())
+    }
 	
-	@Bean
-	ThreadPoolTaskScheduler taskScheduler() {
-		ThreadPoolTaskScheduler taskScheduler = new ThreadPoolTaskScheduler()
-		int threads = Math.ceil(Runtime.runtime.availableProcessors() / 2.0d)
-		taskScheduler.setPoolSize(threads)
-		return taskScheduler
-	}
+    @Bean
+    ThreadPoolTaskScheduler taskScheduler() {
+        ThreadPoolTaskScheduler taskScheduler = new ThreadPoolTaskScheduler()
+        int threads = Math.ceil(Runtime.runtime.availableProcessors() / 2.0d)
+        taskScheduler.setPoolSize(threads)
+        return taskScheduler
+    }
 	
-	@Bean(initMethod="start", destroyMethod="shutdown")
-	Scheduler quartzScheduler() {
-		StdSchedulerFactory.getDefaultScheduler();
-	}
+    @Bean(initMethod="start", destroyMethod="shutdown")
+    Scheduler quartzScheduler() {
+        StdSchedulerFactory.getDefaultScheduler();
+    }
 	
-	@Bean
-	Snapshots snapshots() {
-		return new Snapshots()
-	}
+    @Bean
+    Snapshots snapshots() {
+        return new Snapshots()
+    }
+        
+    @Bean 
+    DB mapDB() {
+        String baseDir = System.getProperty("catalina.base", "/tmp")
+        File dir = new File(baseDir, "mapdb");
+        dir.mkdirs();
+        DB db = DBMaker.newFileDB(new File(dir.absolutePath + "/pgmandb"))
+            .closeOnJvmShutdown()
+            .make();
+        return db;
+    }
+    
 }

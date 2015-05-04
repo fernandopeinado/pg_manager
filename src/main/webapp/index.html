@@ -24,6 +24,7 @@ body {
 <script src="js/jqplot/jqplot.categoryAxisRenderer.js"></script>
 <script type="text/javascript" src="js/app/components.js"></script>
 <script type="text/javascript" src="js/app/dashboard.js"></script>
+<script type="text/javascript" src="js/app/topqueries.js"></script>
 <script type="text/javascript" src="js/app/main.js"></script>
 </head>
 <body ng-controller="MainCtrl">
@@ -33,6 +34,7 @@ body {
 			<div class="collapse navbar-collapse" id="menu-navbar">
 				<ul class="nav navbar-nav">
 					<li class="{{activeView('Dashboard')}}"><a href="#/Dashboard"><span class="glyphicon glyphicon-dashboard" /> Dashboard</a></li>
+          <li class="{{activeView('TopQueries')}}"><a href="#/TopQueries"><span class="glyphicon glyphicon-dashboard" /> Top Queries</a></li>
 					<li class="{{activeView('Administration')}}"><a href="#/Administration"><span class="glyphicon glyphicon-briefcase" /> Administration</a></li>
 					<li class="{{activeView('Reports')}}"><a href="#/Reports"><span class="glyphicon glyphicon-book" /> Reports</a></li>
 				</ul>

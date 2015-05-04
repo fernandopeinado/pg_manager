@@ -1,6 +1,6 @@
 (function() {
 
-	var mainApp = angular.module('mainApp', [ 'ngRoute', 'cas10.components', 'cas10.pgman.dashboard' ]);
+	var mainApp = angular.module('mainApp', [ 'ngRoute', 'cas10.components', 'cas10.pgman.dashboard', 'cas10.pgman.topqueries' ]);
 
 	mainApp.controller('MainCtrl', function($scope, $window) {
 		$window.mainScope = $scope;
@@ -35,6 +35,9 @@
 		}).when('/Dashboard', {
 			templateUrl : 'dashboard.html',
 			controller : 'DashboardCtrl'
+		}).when('/TopQueries', {
+			templateUrl : 'topqueries.html',
+			controller : 'TopQueriesCtrl'
 		}).when('/Administration', {
 			templateUrl : 'administration.html',
 			controller : 'AdministrationCtrl'

@@ -7,7 +7,7 @@
 	</thead>
 	<tbody>
 		<tr ng-if="$index > 0" ng-repeat="row in matrix track by $index" ng-click="rowSelected(row, $index)">
-			<td ng-repeat="td in row track by $index">{{td}}</td>
+			<td ng-if="$index < matrix[0].length" ng-repeat="td in row track by $index">{{td}}</td>
 		</tr>
 	</tbody>
 </table>
