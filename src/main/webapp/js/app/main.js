@@ -38,6 +38,9 @@
 		}).when('/TopQueries', {
 			templateUrl : 'topqueries.html',
 			controller : 'TopQueriesCtrl'
+		}).when('/TopQueriesHist', {
+			templateUrl : 'topqueriesHist.html',
+			controller : 'TopQueriesCtrl'
 		}).when('/Administration', {
 			templateUrl : 'administration.html',
 			controller : 'AdministrationCtrl'

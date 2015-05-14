@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.LinkedList
 import java.util.Map;
 import java.util.Map.Entry
 
@@ -172,16 +173,60 @@ public class PGManagerDAO {
     public List<TopQueriesSnapshot> getSnapshotQueries(int last) {
         BTreeMap<Date, TopQueriesSnapshot> topQueriesSnaps = mapDB.getTreeMap("topqueries");
         NavigableMap<Date, TopQueriesSnapshot> lasts = topQueriesSnaps.descendingMap();
-        List<TopQueriesSnapshot> tops = new ArrayList<>();
+        LinkedList<TopQueriesSnapshot> tops = new LinkedList<>();
         int count = 0;
         for (Iterator<Entry<Date, TopQueriesSnapshot>> it = lasts.iterator(); it.hasNext() && count < last; count++) {
+            Entry<Date, TopQueriesSnapshot> entry = it.next();
+            tops.addFirst(entry.value);
+        }
+        return tops;
+    }
+
+    public List<TopQueriesSnapshot> getSnapshotQueries(Date init, Date end) {
+        BTreeMap<Date, TopQueriesSnapshot> topQueriesSnaps = mapDB.getTreeMap("topqueries");
+        NavigableMap<Date, TopQueriesSnapshot> lasts = topQueriesSnaps.subMap(init, end);
+        LinkedList<TopQueriesSnapshot> tops = new LinkedList<>();
+        for (Iterator<Entry<Date, TopQueriesSnapshot>> it = lasts.iterator(); it.hasNext();) {
             Entry<Date, TopQueriesSnapshot> entry = it.next();
             tops.add(entry.value);
         }
         return tops;
     }
     
-    public void compactDB() {
-        mapDB.compact();
-    }
-}
+    public List<TopQuery> getConslidatedQueries(Date init, Date end) {
+        BTreeMap<Date, TopQueriesSnapshot> topQueriesSnaps = mapDB.getTreeMap("topqueries");
+        NavigableMap<Date, TopQueriesSnapshot> lasts = topQueriesSnaps.subMap(init, end);
+        List<TopQuery> tops = new ArrayList<TopQuery>();
+        Map<String, TopQuery> sqls = new HashMap<String, TopQuery>();
+        for (Iterator<Entry<Date, TopQueriesSnapshot>> it = lasts.iterator(); it.hasNext(); ) {
+            Entry<Date, TopQueriesSnapshot> entry = it.next();
+            TopQueriesSnapshot snap = entry.value;
+            for (TopQuery query : snap.getQueries()) {
+                String key = query.database + ':' + query.query;
+                TopQuery existing = sqls[key];
+                if (!existing) {
+                    TopQuery tq = query.clone();
+                    sqls[key] = tq;
+                    tq.avgTime = 0;
+                    tops.add(tq);
+                }
+                else {
+                    existing.totalTime += query.totalTime;
+                    existing.calls += query.calls;
+                    existing.rows += query.rows;
+                    existing.blkReadTime += query.blkReadTime;
+                    existing.blkWriteTime += query.blkWriteTime;
+                }
+            }
+        }
+        Collections.sort(tops);
+        tops.each { TopQuery top ->
+            top.avgTime = Math.round((double) top.totalTime / (double) top.calls);
+                }
+                return tops;
+                }
+    
+                public void compactDB() {
+                mapDB.compact();
+                }
+                }

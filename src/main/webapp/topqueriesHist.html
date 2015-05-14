@@ -1,0 +1,48 @@
+<style>
+  .row > div {
+      padding: 10px;
+  }
+</style>
+<div class="container-fluid">
+  <div class="row">
+    <div  class="col-md-12">
+      <form class="form-inline">
+        <div class="form-group" ng-init="initHist()">
+          <label>From: </label>
+          <input type="text" placeholder="dd" class="form-control" style="width: 4em;" ng-model="start_date">
+          <label>/</label>
+          <input type="text" placeholder="MM" class="form-control" style="width: 4em;" ng-model="start_month">
+          <label>/</label>
+          <input type="text" placeholder="yyyy" class="form-control" style="width: 5em;" ng-model="start_year">
+          <label>&nbsp;</label>
+          <input type="text" placeholder="HH" class="form-control" style="width: 4em;" ng-model="start_hour">
+          <label>:</label>
+          <input type="text" placeholder="mm" class="form-control" style="width: 4em;" ng-model="start_minute">
+          <label> To: </label>
+          <input type="text" placeholder="dd" class="form-control" style="width: 4em;" ng-model="end_date">
+          <label>/</label>
+          <input type="text" placeholder="MM" class="form-control" style="width: 4em;" ng-model="end_month">
+          <label>/</label>
+          <input type="text" placeholder="yyyy" class="form-control" style="width: 5em;" ng-model="end_year">
+          <label>&nbsp;</label>
+          <input type="text" placeholder="HH" class="form-control" style="width: 4em;" ng-model="end_hour">
+          <label>:</label>
+          <input type="text" placeholder="mm" class="form-control" style="width: 4em;" ng-model="end_minute">
+          <button ng-click="loadHist()" class="btn btn-primary">Load</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="row" ng-show="histHoaded">
+    <div  class="col-md-12">
+      <div id="graph" class="datagraph cpu" style="width: calc(100% - 150px); height: 340px"><!-- Nothing --></div>
+    </div>
+  </div>
+  <div class="row" ng-show="histHoaded">
+    <div id="topqueries_topsql" class="col-md-12 datatable topsql">
+      <cas10-table matrix="tableTopSQL.matrixData" title="tableTopSQL.title" row-selected="selectTopSQLRow">
+      </cas10-table>
+    </div>
+  </div>
+</div>

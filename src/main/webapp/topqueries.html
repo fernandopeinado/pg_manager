@@ -3,49 +3,15 @@
       padding: 10px;
   }
 </style>
-<div class="container-fluid">
+<div class="container-fluid" ng-init="init()">
   <div class="row">
-    <div id="snap_1" class="col-md-1">
-      {{time[11]['totalTime']}}<br>(R:{{time[11]['readTime']}}/W:{{time[11]['writeTime']}})
-    </div>
-    <div id="snap_2" class="col-md-1">
-      {{time[10]['totalTime']}}<br>(R:{{time[10]['readTime']}}/W:{{time[10]['writeTime']}})
-    </div>
-    <div id="snap_3" class="col-md-1">
-      {{time[9]['totalTime']}}<br>(R:{{time[9]['readTime']}}/W:{{time[9]['writeTime']}})
-    </div>
-    <div id="snap_4" class="col-md-1">
-      {{time[8]['totalTime']}}<br>(R:{{time[8]['readTime']}}/W:{{time[8]['writeTime']}})
-    </div>
-    <div id="snap_5" class="col-md-1">
-      {{time[7]['totalTime']}}<br>(R:{{time[7]['readTime']}}/W:{{time[7]['writeTime']}})
-    </div>
-    <div id="snap_6" class="col-md-1">
-      {{time[6]['totalTime']}}<br>(R:{{time[6]['readTime']}}/W:{{time[6]['writeTime']}})
-    </div>
-    <div id="snap_7" class="col-md-1">
-      {{time[5]['totalTime']}}<br>(R:{{time[5]['readTime']}}/W:{{time[5]['writeTime']}})
-    </div>
-    <div id="snap_8" class="col-md-1">
-      {{time[4]['totalTime']}}<br>(R:{{time[4]['readTime']}}/W:{{time[4]['writeTime']}})
-    </div>
-    <div id="snap_9" class="col-md-1">
-      {{time[3]['totalTime']}}<br>(R:{{time[3]['readTime']}}/W:{{time[3]['writeTime']}})
-    </div>
-    <div id="snap_10" class="col-md-1">
-      {{time[2]['totalTime']}}<br>(R:{{time[2]['readTime']}}/W:{{time[2]['writeTime']}})
-    </div>
-    <div id="snap_11" class="col-md-1">
-      {{time[1]['totalTime']}}<br>(R:{{time[1]['readTime']}}/W:{{time[1]['writeTime']}})
-    </div>
-    <div id="snap_12" class="col-md-1">
-      {{time[0]['totalTime']}}<br>(R:{{time[0]['readTime']}}/W:{{time[0]['writeTime']}})
+    <div  class="col-md-12">
+      <div id="graph" class="datagraph cpu" style="width: calc(100% - 150px); height: 340px"><!-- Nothing --></div>
     </div>
   </div>
   <div class="row">
     <div id="topqueries_topsql" class="col-md-12 datatable topsql">
       <cas10-table matrix="tableTopSQL.matrixData" title="tableTopSQL.title" row-selected="selectTopSQLRow">
-        <button class="btn btn-primary pull-left" ng-click="refreshTopSql()"><i class="glyphicon glyphicon-refresh"></i> Refresh</button>
       </cas10-table>
     </div>
   </div>

@@ -12,7 +12,7 @@ import java.util.Objects;
  *
  * @author kasten
  */
-public class TopQuery implements Serializable, Comparable<TopQuery> {
+public class TopQuery implements Serializable, Comparable<TopQuery>, Cloneable {
 
   private String database;
   private String query;
@@ -93,6 +93,11 @@ public class TopQuery implements Serializable, Comparable<TopQuery> {
     hash = 73 * hash + Objects.hashCode(this.database);
     hash = 73 * hash + Objects.hashCode(this.query);
     return hash;
+  }
+
+  @Override
+  protected Object clone() throws CloneNotSupportedException {
+    return super.clone(); //To change body of generated methods, choose Tools | Templates.
   }
 
   @Override

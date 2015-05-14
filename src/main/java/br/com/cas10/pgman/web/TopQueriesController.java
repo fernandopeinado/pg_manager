@@ -1,16 +1,19 @@
 package br.com.cas10.pgman.web;
 
 import br.com.cas10.pgman.domain.TopQueriesSnapshot;
+import br.com.cas10.pgman.domain.TopQuery;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import br.com.cas10.pgman.service.PGManagerDAO;
+import java.util.Date;
 import java.util.List;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.web.bind.annotation.PathVariable;
 
 @Controller
 @RequestMapping("/topqueries")
@@ -20,10 +23,24 @@ public class TopQueriesController {
   private PGManagerDAO dao;
 
   @ResponseBody
-  @RequestMapping(method = RequestMethod.GET)
-  public List<TopQueriesSnapshot> topQueries(Model model) {
-    List<TopQueriesSnapshot> snaps = dao.getSnapshotQueries(12);
+  @RequestMapping(value = "/{last}", method = RequestMethod.GET)
+  public List<TopQueriesSnapshot> topQueries(@PathVariable("last") int last) {
+    List<TopQueriesSnapshot> snaps = dao.getSnapshotQueries(last);
     return snaps;
+  }
+
+  @ResponseBody
+  @RequestMapping(value = "/period/{init}/{end}", method = RequestMethod.GET)
+  public List<TopQueriesSnapshot> topQueries(@PathVariable("init") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ssZ") Date init, @PathVariable("end") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ssZ") Date end) {
+    List<TopQueriesSnapshot> snaps = dao.getSnapshotQueries(init, end);
+    return snaps;
+  }
+
+  @ResponseBody
+  @RequestMapping(value = "/consolidate/{init}/{end}", method = RequestMethod.GET)
+  public List<TopQuery> consolidateQueries(@PathVariable("init") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ssZ") Date init, @PathVariable("end") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ssZ") Date end) {
+    List<TopQuery> tops = dao.getConslidatedQueries(init, end);
+    return tops;
   }
 
 }

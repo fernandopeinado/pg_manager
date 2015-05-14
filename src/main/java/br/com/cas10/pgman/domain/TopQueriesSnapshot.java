@@ -50,6 +50,14 @@ public class TopQueriesSnapshot implements Serializable, Comparable<TopQueriesSn
     this.totalTime = totalTime;
   }
 
+  public Double getNormalizedTotalTime() {
+    long diff = this.end.getTime() - this.start.getTime();
+    if (diff == 0) {
+      return 0d;
+    }
+    return Math.round(totalTime * 1000d / diff) / 1000d;
+  }
+
   public Long getReadTime() {
     return readTime;
   }
@@ -58,12 +66,28 @@ public class TopQueriesSnapshot implements Serializable, Comparable<TopQueriesSn
     this.readTime = readTime;
   }
 
+  public Double getNormalizedReadTime() {
+    long diff = this.end.getTime() - this.start.getTime();
+    if (diff == 0) {
+      return 0d;
+    }
+    return Math.round(readTime * 1000d / diff) / 1000d;
+  }
+
   public Long getWriteTime() {
     return writeTime;
   }
 
   public void setWriteTime(Long writeTime) {
     this.writeTime = writeTime;
+  }
+
+  public Double getNormalizedWriteTime() {
+    long diff = this.end.getTime() - this.start.getTime();
+    if (diff == 0) {
+      return 0d;
+    }
+    return Math.round(writeTime * 1000d / diff) / 1000d;
   }
 
   public SortedSet<TopQuery> getQueries() {
