@@ -15,8 +15,9 @@
     });
 
     $scope.loadHist = function () {      
-      var start = new Date($scope.start_year + '-' + $scope.start_month + '-' + $scope.start_date + ' ' + $scope.start_hour + ':' + $scope.start_minute + ':00');
-      var end = new Date($scope.end_year + '-' + $scope.end_month + '-' + $scope.end_date + ' ' + $scope.end_hour + ':' + $scope.end_minute + ':00');
+      var offsetInMillis = new Date().getTimezoneOffset() * 60000;
+      var start = new Date(new Date($scope.start_year + '-' + $scope.start_month + '-' + $scope.start_date + 'T' + $scope.start_hour + ':' + $scope.start_minute + ':00.000Z').getTime() + offsetInMillis);
+      var end = new Date(new Date($scope.end_year + '-' + $scope.end_month + '-' + $scope.end_date + 'T' + $scope.end_hour + ':' + $scope.end_minute + ':00.000Z').getTime() + offsetInMillis);
       $scope.refreshTopSqlPeriod(start, end);
       $scope.histHoaded = true;
     }
@@ -114,21 +115,29 @@
       }, 60000);
     }
 
+    function zeroLeftPad(val) {
+      var x = val + '';
+      if (x.length == 1) {
+        return '0' + x;
+      }
+      return x;
+    }
+
     $scope.initHist = function () {
       $window.mainScope.currentView = 'TopQueriesHist';
       var end = new Date();
       var start = new Date(end.getTime() - 3600000);
       $scope.start_year = start.getFullYear();
-      $scope.start_month = start.getMonth() + 1;
-      $scope.start_date = start.getDate();
-      $scope.start_hour = start.getHours();
-      $scope.start_minute = start.getMinutes();
+      $scope.start_month = zeroLeftPad(start.getMonth() + 1);
+      $scope.start_date = zeroLeftPad(start.getDate());
+      $scope.start_hour = zeroLeftPad(start.getHours());
+      $scope.start_minute = zeroLeftPad(start.getMinutes());
 
       $scope.end_year = end.getFullYear();
-      $scope.end_month = end.getMonth() + 1;
-      $scope.end_date = end.getDate();
-      $scope.end_hour = end.getHours();
-      $scope.end_minute = end.getMinutes();
+      $scope.end_month = zeroLeftPad(end.getMonth() + 1);
+      $scope.end_date = zeroLeftPad(end.getDate());
+      $scope.end_hour = zeroLeftPad(end.getHours());
+      $scope.end_minute = zeroLeftPad(end.getMinutes());
 
     };
 
