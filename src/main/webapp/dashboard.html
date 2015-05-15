@@ -28,23 +28,11 @@
 	</div>
 </div>
 <div class="row">
-	<div id="dashboard_stats_table" class="col-md-12 datatable stats" >
-		<cas10-table title="tableStats.title" matrix="tableStats.matrixData"/>
-	</div>
-</div>
-<div class="row">
 	<div id="dashboard_cache_table" class="col-md-6 datatable cache" >
 		<cas10-table title="tableCache.title" matrix="tableCache.matrixData" row-selected="selectCacheRow"/>
 	</div>
 	<div class="col-md-6 datatable" >
 		<cas10-table title="dbSizes.title" matrix="dbSizes.matrixData" row-selected="selectDbSizesRow"/>
-	</div>
-</div>
-<div class="row">
-	<div id="dashboard_topsql" class="col-md-12 datatable topsql">
-		<cas10-table matrix="tableTopSQL.matrixData" title="tableTopSQL.title" row-selected="selectTopSQLRow">
-			<button class="btn btn-primary pull-left" ng-click="refreshTopSql()"><i class="glyphicon glyphicon-refresh"></i> Refresh</button> <button class="btn pull-right" ng-click="resetTopSql()"><i class="glyphicon glyphicon-trash"></i> Reset</button>
-		</cas10-table>
 	</div>
 </div>
 </div>

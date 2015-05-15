@@ -28,7 +28,7 @@
     }
 
     $scope.refreshTopSqlPeriod = function (start, end) {
-      $http.get('ws/topqueries/period/' + framework.isodate(start) + '/' + framework.isodate(end), {responseType: "json"})
+      $http.get('ws/topqueries/period/' + start.toISOString() + '/' + end.toISOString() + '.json', {responseType: "json"})
           .success(function (data, status) {
             var graph = {data: [[], [], []], labels: [{label: 'CPU'}, {label: 'READ'}, {label: 'WRITE'}], minTime: '2013-10-10 10:00:00', maxTime: '2013-10-10 10:00:00'};
             var sqls = {};
@@ -46,7 +46,7 @@
             $scope.graph = graph;
           });
 
-      $http.get('ws/topqueries/consolidate/' + framework.isodate(start) + '/' + framework.isodate(end), {responseType: "json"})
+      $http.get('ws/topqueries/consolidate/' + start.toISOString() + '/' + end.toISOString() + '.json', {responseType: "json"})
           .success(function (data, status) {
             var tableTopSQL = {
               title: "Top SQLs",
@@ -130,7 +130,7 @@
       $scope.end_hour = end.getHours();
       $scope.end_minute = end.getMinutes();
 
-    }
+    };
 
   });
 

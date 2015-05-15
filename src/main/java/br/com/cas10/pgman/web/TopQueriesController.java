@@ -31,14 +31,14 @@ public class TopQueriesController {
 
   @ResponseBody
   @RequestMapping(value = "/period/{init}/{end}", method = RequestMethod.GET)
-  public List<TopQueriesSnapshot> topQueries(@PathVariable("init") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ssZ") Date init, @PathVariable("end") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ssZ") Date end) {
+  public List<TopQueriesSnapshot> topQueries(@PathVariable("init") @DateTimeFormat(pattern="yyyy-MM-dd'T'HH:mm:ss.SSSX") Date init, @PathVariable("end") @DateTimeFormat(pattern="yyyy-MM-dd'T'HH:mm:ss.SSSX") Date end) {
     List<TopQueriesSnapshot> snaps = dao.getSnapshotQueries(init, end);
     return snaps;
   }
 
   @ResponseBody
   @RequestMapping(value = "/consolidate/{init}/{end}", method = RequestMethod.GET)
-  public List<TopQuery> consolidateQueries(@PathVariable("init") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ssZ") Date init, @PathVariable("end") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ssZ") Date end) {
+  public List<TopQuery> consolidateQueries(@PathVariable("init") @DateTimeFormat(pattern="yyyy-MM-dd'T'HH:mm:ss.SSSX") Date init, @PathVariable("end") @DateTimeFormat(pattern="yyyy-MM-dd'T'HH:mm:ss.SSSX") Date end) {
     List<TopQuery> tops = dao.getConslidatedQueries(init, end);
     return tops;
   }

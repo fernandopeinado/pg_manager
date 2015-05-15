@@ -1,9 +1,4 @@
-var framework = framework || {
-  isodate: function (date) {
-    var str = date.toISOString();
-    return str.substr(0, str.lastIndexOf('.')) + '+0000';
-  }
-}
+var framework = framework || {}
 
 framework.timedSeries = framework.timedSeries ||
     (function () {
