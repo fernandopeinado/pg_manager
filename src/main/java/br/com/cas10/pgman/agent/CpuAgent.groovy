@@ -14,7 +14,7 @@ class CpuAgent extends Agent {
 	private static final Pattern PATTERN = Pattern.compile("\\s+(\\d+)\\s(.*)")
 	
 	CpuAgent() {
-		super("cpu", 6000L, 300)
+		super("cpu", 12000L, 300)
 	}
 	
 	@Override

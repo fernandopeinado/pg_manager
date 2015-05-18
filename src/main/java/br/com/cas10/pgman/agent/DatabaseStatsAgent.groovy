@@ -22,7 +22,7 @@ class DatabaseStatsAgent extends Agent {
 	private PostgresqlService postgresqlService;
 	
 	DatabaseStatsAgent() {
-		super("database_stats", 6000L, 300)
+		super("database_stats", 12000L, 300)
 	}
 	
 	@Override

@@ -14,7 +14,7 @@ class MemoryAgent extends Agent {
 	private static final Pattern PATTERN = Pattern.compile("\\s+(\\d+)\\s(.*)")
 	
 	MemoryAgent() {
-		super("memory", 6000L, 300)
+		super("memory", 12000L, 300)
 	}
 	
 	@Override
