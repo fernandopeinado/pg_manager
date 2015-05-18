@@ -73,8 +73,7 @@
         },
         axes: {
           yaxis: {
-            min: 0,
-            tickInterval: 0.25
+            min: 0
           },
           xaxis: {
             renderer: $.jqplot.DateAxisRenderer,
