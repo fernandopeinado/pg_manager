@@ -16,7 +16,7 @@ Installation Procedure
 Application Environment
 -----------------------
 
-* JDK 7
+* JDK 8
 * Tomcat 7
 
 server.xml: add Datasource Resource and configure 
@@ -63,6 +63,13 @@ PostgreSQL Environment
 ----------------------
 
 * PostgreSQL Server should be running on the same machine of this application.
-* pg_hba.conf: Access must be in "trust" mode for all users from the same host (127.0.0.1)
+* pg_hba.conf: Access must be in "trust" mode for user postgres from the same host (127.0.0.1)
 * postgres.conf: load the contrib extension pg_stat_staments
 
+<pre>
+  shared_preload_libraries = 'pg_stat_statements'
+  pg_stat_statements.max = 10000
+  pg_stat_statements.track = all
+  track_io_timing = on
+  track_activity_query_size = 10240
+</pre>

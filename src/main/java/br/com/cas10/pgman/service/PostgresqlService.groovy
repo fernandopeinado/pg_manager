@@ -56,7 +56,7 @@ class PostgresqlService {
 				pg_indexes_size(C.oid) AS indexsizebytes
 			FROM pg_class C
 				LEFT JOIN pg_namespace N ON (N.oid = C.relnamespace)
-			WHERE nspname NOT IN ('pg_catalog', 'information_schema')
+			WHERE nspname NOT IN ('information_schema')
 				AND C.relkind <> 'i'
 				AND nspname !~ '^pg_toast'
 				AND pg_total_relation_size(C.oid) > :threshouldSizeBytes
