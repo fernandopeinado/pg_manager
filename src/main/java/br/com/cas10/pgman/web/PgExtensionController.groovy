@@ -1,5 +1,6 @@
 package br.com.cas10.pgman.web
 
+import br.com.cas10.pgman.service.DatabaseService
 import br.com.cas10.pgman.service.PgExtensionDAO
 import groovy.transform.CompileStatic
 import org.springframework.beans.factory.annotation.Autowired
@@ -16,7 +17,16 @@ class PgExtensionController {
 	
 	@Autowired
 	private PgExtensionDAO dao;
-	
+
+	@Autowired
+	private DatabaseService dbService;
+
+	@RequestMapping(method = RequestMethod.GET)
+	public String listDbs(Model model) {
+		model.addAttribute("databases", dbService.databases)
+		return "extensionDb"
+	}
+
 	@RequestMapping(value = "/{database}", method = RequestMethod.GET)
 	public String open(@PathVariable("database") String database, Model model) {
 		model.addAttribute("extensions", dao.getExtensions(database))

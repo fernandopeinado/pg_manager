@@ -1,5 +1,8 @@
 package br.com.cas10.pgman.service
 
+import br.com.cas10.pgman.domain.Parameter
+import br.com.cas10.pgman.domain.ParameterCategory
+
 import javax.sql.DataSource
 
 import org.mapdb.BTreeMap;
@@ -231,18 +234,35 @@ class PostgresqlService {
         return result;
     }
 
-    public List<Map<String,Object>> getSettings() {
+    public List<ParameterCategory> getSettings(boolean nonDefaultOnly) {
+        String clause = ""
+        if (nonDefaultOnly) {
+            clause = "WHERE setting <> boot_val"
+        }
         String query = 	"""
 			SELECT
 				name, setting, unit, category, short_desc, 
 				extra_desc, context, vartype, source, 
 				min_val, max_val, enumvals, boot_val, 
 				reset_val, sourcefile, sourceline
-			FROM pg_settings 
+			FROM pg_settings ${clause}
 			ORDER BY category, name"""
 
         List<Map<String,Object>> result = jdbc.queryForList(query, [:]);
-        return result;
+        List<ParameterCategory> list = new ArrayList<>()
+        ParameterCategory category = new ParameterCategory("")
+        result.each { item ->
+            if (category.name != item.category) {
+                category = new ParameterCategory(item.category)
+                list << category
+            }
+            String val = item.setting
+            if (item.unit) {
+                val += " (${item.unit})"
+            }
+            category.parameters << new Parameter(item.name, val, item.boot_val, item.extra_desc, item.source)
+        };
+        return list;
     }
 
     @Transactional(readOnly = false)

@@ -12,19 +12,20 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>${title}</title>
 <link href="${contextPath}/css/bootstrap.css" rel="stylesheet">
+<link href="${contextPath}/css/bootstrap-theme.css" rel="stylesheet">
 <link href="${contextPath}/css/bootstrap-responsive.css" rel="stylesheet">
 <jsp:invoke fragment="styles" />
 </head>
 <body data-contextpath="${contextPath}" style="padding-top: 60px">
-	<div class="navbar navbar-fixed-top">
-		<div class="navbar-inner">
-			<div class="container">
-				<a class="brand" href="#">PGManager</a>
-				<ul class="nav">
-					<t:menu menuActive="${title}"></t:menu>
-				</ul>
-			</div>
-		</div>
+	<div class="navbar navbar-default navbar-fixed-top">
+	    <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="#">PGManager</a>
+            </div>
+            <ul class="nav navbar-nav">
+                <t:menu menuActive="${title}"></t:menu>
+            </ul>
+        </div>
 	</div>
 	<div class="container">
 		<c:if test="${not empty title}">
