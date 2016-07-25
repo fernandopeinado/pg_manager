@@ -1,19 +1,16 @@
 package br.com.cas10.pgman.service
 
+import br.com.cas10.pgman.domain.Database
 import br.com.cas10.pgman.domain.Parameter
 import br.com.cas10.pgman.domain.ParameterCategory
-
-import javax.sql.DataSource
-
-import org.mapdb.BTreeMap;
+import org.mapdb.BTreeMap
 import org.mapdb.DB
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
-import br.com.cas10.pgman.domain.Database
-import br.com.cas10.pgman.utils.SizeUtils;
+import javax.sql.DataSource
 
 @Service
 @Transactional(readOnly = true)

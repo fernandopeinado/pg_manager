@@ -1,12 +1,11 @@
 package br.com.cas10.pgman.worker
 
-import org.quartz.DisallowConcurrentExecution;
-import org.quartz.Job;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
-import org.springframework.web.context.ContextLoader;
-
-import br.com.cas10.pgman.service.SchedulerService;
+import br.com.cas10.pgman.service.SchedulerService
+import org.quartz.DisallowConcurrentExecution
+import org.quartz.Job
+import org.quartz.JobExecutionContext
+import org.quartz.JobExecutionException
+import org.springframework.web.context.ContextLoader
 
 @DisallowConcurrentExecution
 class WorkerJob implements Job {

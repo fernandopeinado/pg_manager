@@ -1,14 +1,12 @@
 package br.com.cas10.pgman.agent
 
-import groovy.util.logging.Log4j;
+import br.com.cas10.pgman.analitics.CircularList
+import br.com.cas10.pgman.analitics.Snapshot
+import br.com.cas10.pgman.analitics.Snapshots
+import groovy.util.logging.Log4j
+import org.springframework.beans.factory.annotation.Autowired
 
-import javax.annotation.PostConstruct;
-
-import org.springframework.beans.factory.annotation.Autowired;
-
-import br.com.cas10.pgman.analitics.CircularList;
-import br.com.cas10.pgman.analitics.Snapshot;
-import br.com.cas10.pgman.analitics.Snapshots;
+import javax.annotation.PostConstruct
 
 @Log4j
 abstract class Agent implements Runnable {

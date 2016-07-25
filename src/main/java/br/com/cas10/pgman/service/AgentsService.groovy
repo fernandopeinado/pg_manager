@@ -1,12 +1,11 @@
 package br.com.cas10.pgman.service
 
-import javax.annotation.PostConstruct;
+import br.com.cas10.pgman.agent.Agent
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.scheduling.TaskScheduler
+import org.springframework.stereotype.Service
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.TaskScheduler;
-import org.springframework.stereotype.Service;
-
-import br.com.cas10.pgman.agent.Agent;
+import javax.annotation.PostConstruct
 
 @Service
 class AgentsService {

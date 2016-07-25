@@ -1,21 +1,16 @@
 package br.com.cas10.pgman.service
 
-
-import static org.quartz.JobBuilder.*;
-import static org.quartz.SimpleScheduleBuilder.*;
-import static org.quartz.CronScheduleBuilder.*;
-import static org.quartz.CalendarIntervalScheduleBuilder.*;
-import static org.quartz.TriggerBuilder.*;
-import static org.quartz.DateBuilder.*;
-
+import br.com.cas10.pgman.worker.Worker
+import br.com.cas10.pgman.worker.WorkerJob
 import org.quartz.JobDetail
 import org.quartz.Scheduler
 import org.quartz.Trigger
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
-import br.com.cas10.pgman.worker.Worker
-import br.com.cas10.pgman.worker.WorkerJob
+import static org.quartz.CronScheduleBuilder.cronSchedule
+import static org.quartz.JobBuilder.newJob
+import static org.quartz.TriggerBuilder.newTrigger
 
 @Service
 class SchedulerService {

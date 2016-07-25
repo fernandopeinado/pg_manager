@@ -1,32 +1,19 @@
-package br.com.cas10.pgman.service;
+package br.com.cas10.pgman.service
 
-import groovy.transform.CompileStatic;
-
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.LinkedList
-import java.util.Map;
-import java.util.Map.Entry
-
-import javax.sql.DataSource;
+import br.com.cas10.pgman.domain.Database
+import br.com.cas10.pgman.domain.HistSize
+import br.com.cas10.pgman.domain.TopQueriesSnapshot
+import br.com.cas10.pgman.domain.TopQuery
 import liquibase.structure.core.Table
+import org.mapdb.BTreeMap
+import org.mapdb.DB
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
+import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
-import org.mapdb.BTreeMap;
-import org.mapdb.DB;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import br.com.cas10.pgman.domain.Database;
-import br.com.cas10.pgman.domain.HistSize;
-import br.com.cas10.pgman.domain.TopQueriesSnapshot;
-import br.com.cas10.pgman.domain.TopQuery;
+import javax.sql.DataSource
+import java.util.Map.Entry
 
 @Service
 @Transactional

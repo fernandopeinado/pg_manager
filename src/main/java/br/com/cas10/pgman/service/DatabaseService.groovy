@@ -1,16 +1,13 @@
 package br.com.cas10.pgman.service
 
-import java.util.HashMap;
-
-import javax.annotation.PostConstruct;
-import javax.sql.DataSource
-
-import org.postgresql.ds.PGConnectionPoolDataSource;
-import org.postgresql.ds.PGPoolingDataSource;
+import org.postgresql.ds.PGPoolingDataSource
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+
+import javax.annotation.PostConstruct
+import javax.sql.DataSource
 
 @Service
 @Transactional(readOnly = true)

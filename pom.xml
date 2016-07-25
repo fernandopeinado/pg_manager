@@ -20,14 +20,20 @@
         </pluginRepository>	
     </pluginRepositories>
     <properties>
-        <spring_version>4.2.4.RELEASE</spring_version>
+        <groovy_version>2.4.7</groovy_version>
+        <jackson_databind_version>2.4.5.1</jackson_databind_version>
+        <slf4j_log4j_version>1.7.12</slf4j_log4j_version>
+        <mapdb_version>1.0.9</mapdb_version>
+        <postgresql_version>9.2-1004-jdbc41</postgresql_version>
+        <quartz_version>2.2.3</quartz_version>
+        <spring_version>4.2.7.RELEASE</spring_version>
     </properties>
     <dependencies>
         <dependency>
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy-all</artifactId>
             <classifier>indy</classifier>
-            <version>2.4.5</version>
+            <version>${groovy_version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
@@ -78,22 +84,22 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>2.4.5.1</version>
+            <version>${jackson_databind_version}</version>
         </dependency>
         <dependency>
             <groupId>org.mapdb</groupId>
             <artifactId>mapdb</artifactId>
-            <version>1.0.8</version>
+            <version>${mapdb_version}</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
-            <version>1.7.12</version>
+            <version>${slf4j_log4j_version}</version>
         </dependency>
         <dependency>
             <groupId>org.quartz-scheduler</groupId>
             <artifactId>quartz</artifactId>
-            <version>2.2.1</version>
+            <version>${quartz_version}</version>
             <exclusions>
                 <exclusion>
                     <artifactId>c3p0</artifactId>
@@ -108,9 +114,9 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>postgresql</groupId>
+            <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <version>9.1-901-1.jdbc4</version>
+            <version>${postgresql_version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -145,44 +151,62 @@
             <artifactId>liquibase-core</artifactId>
             <version>3.3.2</version>
         </dependency>
-	<!--
-        <dependency>
-            <groupId>br.com.cas10.pgman</groupId>
-            <artifactId>pgman</artifactId>
-            <version>0.3-SNAPSHOT</version>
-            <type>war</type>
-        </dependency>
-	-->
     </dependencies>
     <build>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.1</version>
-                <configuration>
-                    <compilerId>groovy-eclipse-compiler</compilerId>
-                    <source>1.8</source>
-                    <target>1.8</target>
-                </configuration>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.codehaus.groovy</groupId>
-                        <artifactId>groovy-eclipse-compiler</artifactId>
-                        <version>2.9.2-01</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.codehaus.groovy</groupId>
-                        <artifactId>groovy-eclipse-batch</artifactId>
-                        <version>2.4.3-01</version>
-                    </dependency>
-                </dependencies>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
                 <configuration>
                     <failOnMissingWebXml>false</failOnMissingWebXml>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.gmavenplus</groupId>
+                <artifactId>gmavenplus-plugin</artifactId>
+                <version>1.5</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>addSources</goal>
+                            <goal>addTestSources</goal>
+                            <goal>generateStubs</goal>
+                            <goal>compile</goal>
+                            <goal>testGenerateStubs</goal>
+                            <goal>testCompile</goal>
+                            <goal>removeStubs</goal>
+                            <goal>removeTestStubs</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <invokeDynamic>true</invokeDynamic>
+                    <targetBytecode>1.8</targetBytecode>
+                    <sources>
+                        <source>
+                            <directory>${project.basedir}/src/main/java</directory>
+                            <includes>
+                                <include>**/*.groovy</include>
+                            </includes>
+                        </source>
+                    </sources>
+                    <testSources>
+                        <testSource>
+                            <directory>${project.basedir}/src/test/java</directory>
+                            <includes>
+                                <include>**/*.groovy</include>
+                            </includes>
+                        </testSource>
+                    </testSources>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.3</version>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
                 </configuration>
             </plugin>
         </plugins>

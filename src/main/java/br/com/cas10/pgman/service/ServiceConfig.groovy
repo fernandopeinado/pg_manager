@@ -1,27 +1,22 @@
 package br.com.cas10.pgman.service
 
-import java.beans.beancontext.BeanContext;
-
-import br.com.cas10.pgman.worker.WorkerConfig;
-
-import javax.sql.DataSource
-
-import org.mapdb.*;
-import org.quartz.Scheduler;
-import org.quartz.impl.StdSchedulerFactory;
+import br.com.cas10.pgman.agent.AgentConfig
+import br.com.cas10.pgman.analitics.Snapshots
+import br.com.cas10.pgman.worker.WorkerConfig
+import org.mapdb.DB
+import org.mapdb.DBMaker
+import org.quartz.Scheduler
+import org.quartz.impl.StdSchedulerFactory
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Configuration
-import org.springframework.context.annotation.Import;
-import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.context.annotation.Import
+import org.springframework.jdbc.datasource.DataSourceTransactionManager
 import org.springframework.jndi.JndiTemplate
-import org.springframework.orm.jpa.JpaTransactionManager
-import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean
-import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler
 import org.springframework.transaction.annotation.EnableTransactionManagement
 
-import br.com.cas10.pgman.agent.AgentConfig;
-import br.com.cas10.pgman.analitics.Snapshots;
+import javax.sql.DataSource
 
 @Configuration
 @ComponentScan(basePackages=["br.com.cas10.pgman.service"])

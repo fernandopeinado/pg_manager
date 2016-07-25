@@ -1,17 +1,12 @@
 package br.com.cas10.pgman.agent
 
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import br.com.cas10.pgman.analitics.Snapshot
+import br.com.cas10.pgman.service.PostgresqlService
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.stereotype.Component
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-import br.com.cas10.pgman.analitics.Snapshot;
-import br.com.cas10.pgman.analitics.Snapshots;
-import br.com.cas10.pgman.service.PostgresqlService;
+import java.util.Map.Entry
+import java.util.regex.Pattern
 
 @Component
 class DatabaseStatsAgent extends Agent {

@@ -1,12 +1,10 @@
 package br.com.cas10.pgman.agent
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import br.com.cas10.pgman.analitics.Snapshot
+import org.springframework.stereotype.Component
 
-import org.springframework.stereotype.Component;
-
-import br.com.cas10.pgman.analitics.Snapshot;
-import br.com.cas10.pgman.analitics.Snapshots;
+import java.util.regex.Matcher
+import java.util.regex.Pattern
 
 @Component
 class CpuAgent extends Agent {

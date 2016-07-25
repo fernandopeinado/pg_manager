@@ -1,22 +1,17 @@
 package br.com.cas10.pgman.service
 
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.HashMap;
-
-import javax.annotation.PostConstruct;
-import javax.sql.DataSource
-
-import liquibase.Liquibase;
-import liquibase.database.Database;
-import liquibase.database.DatabaseConnection;
-import liquibase.database.jvm.JdbcConnection;
-import liquibase.resource.ClassLoaderResourceAccessor;
-
+import liquibase.Liquibase
+import liquibase.database.DatabaseConnection
+import liquibase.database.jvm.JdbcConnection
+import liquibase.resource.ClassLoaderResourceAccessor
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+
+import javax.annotation.PostConstruct
+import javax.sql.DataSource
+import java.sql.Connection
 
 @Service
 @Transactional

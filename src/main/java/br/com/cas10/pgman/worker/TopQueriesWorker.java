@@ -1,11 +1,10 @@
 package br.com.cas10.pgman.worker;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import br.com.cas10.pgman.service.PGManagerDAO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 @Component
 public class TopQueriesWorker extends Worker {
