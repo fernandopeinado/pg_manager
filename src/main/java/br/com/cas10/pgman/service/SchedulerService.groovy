@@ -1,16 +1,10 @@
 package br.com.cas10.pgman.service
 
 import br.com.cas10.pgman.worker.Worker
-import br.com.cas10.pgman.worker.WorkerJob
-import org.quartz.JobDetail
-import org.quartz.Scheduler
-import org.quartz.Trigger
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler
+import org.springframework.scheduling.support.CronTrigger
 import org.springframework.stereotype.Service
-
-import static org.quartz.CronScheduleBuilder.cronSchedule
-import static org.quartz.JobBuilder.newJob
-import static org.quartz.TriggerBuilder.newTrigger
 
 @Service
 class SchedulerService {
@@ -18,7 +12,7 @@ class SchedulerService {
 	private Map<String, Worker> workers
 	
 	@Autowired
-	private Scheduler scheduler
+	private ThreadPoolTaskScheduler scheduler
 
 	@Autowired
 	void setWorkers(List<Worker> workers) {
@@ -34,20 +28,11 @@ class SchedulerService {
 	}
 	
 	private void schedule(Worker worker) {
-		JobDetail job = newJob(WorkerJob.class)
-				.withIdentity(worker.type, "workers")
-				.usingJobData("workerType", worker.type)
-				.build()
-		Trigger trigger = newTrigger()
-				.withIdentity("${worker.type}Trigger", "workers")
-				.startNow()
-				.withSchedule(cronSchedule(worker.cron))
-				.build()
-		scheduler.scheduleJob(job, trigger)
-		worker.scheduled();
+		scheduler.schedule(worker, new CronTrigger(worker.cron))
+		worker.scheduled()
 	}
 	
-	public void doWork(String type) {
+	void doWork(String type) {
 		Worker worker = workers[type]
 		if (worker) {
 			worker.run()

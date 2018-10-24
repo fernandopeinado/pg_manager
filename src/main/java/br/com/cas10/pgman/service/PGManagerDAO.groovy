@@ -5,76 +5,45 @@ import br.com.cas10.pgman.domain.HistSize
 import br.com.cas10.pgman.domain.TopQueriesSnapshot
 import br.com.cas10.pgman.domain.TopQuery
 import liquibase.structure.core.Table
-import org.mapdb.BTreeMap
-import org.mapdb.DB
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
-import javax.sql.DataSource
 import java.util.Map.Entry
 
 @Service
 @Transactional
-public class PGManagerDAO {
+class PGManagerDAO {
 
-    private NamedParameterJdbcTemplate jdbc;
-	
-    @Autowired
-    private DatabaseService databaseService;
-	
     @Autowired
     private PostgresqlService postgresqlService;
 
-    @Autowired
-    private DB mapDB;
 
-    @Autowired
-    void setDataSource(DataSource dataSource) {
-        jdbc = new NamedParameterJdbcTemplate(dataSource);
-    }
-        
-    void updateDbSizes() {
-        Long now = System.currentTimeMillis();
-        Map<String, Object> params = new HashMap<String, Object>();
-        List<Map<String, Object>> result = jdbc.queryForList("SELECT datname, pg_database_size(datname) as dbsize FROM pg_database", params);
+    List<Map<String,Object>> getTopDatabaseSizes(Integer top) {
+        List<Map<String,Object>> result = new ArrayList<>();
         BTreeMap<String, Database> databases = mapDB.getTreeMap("databases");
-        result.each { Map<String, Object> row ->
-            Database db = databases.get(row.datname);
-            if (db == null) {
-                db = new Database();
-                db.name = row.datname;
-            }
-            db.size = row.dbsize;
-            HistSize hist = new HistSize(size: row.dbsize);
-            db.hist.put(hist.date, hist);
-            databases.put(db.name, db);
+        databases.values().each { Database database ->
+            result.add(["dbname": database.name, "size": database.prettyPrintSize, "_sizeBytes": database.size]);
         }
-        mapDB.commit();
+        Collections.sort(result, { Map<String,Object> o1, Map<String,Object> o2 ->
+            return -o1._sizeBytes.compareTo(o2._sizeBytes);
+        } as Comparator<Map<String,Object>>)
+        return result;
+    }
+
+    void updateDbSizes() {
+        Map<String, Long> result = postgresqlService.getDatabaseSizes()
     }
 	
     void cleanDbSizes(int daysToKeep) {
         GregorianCalendar breakPoint = new GregorianCalendar()
         breakPoint.add(Calendar.DAY_OF_YEAR, -daysToKeep)
-        BTreeMap<String, Database> databases = mapDB.getTreeMap("databases")
-        new ArrayList<Database>(databases.values()).each { Database db -> 
-            db.hist = db.hist.tailMap(breakPoint.time); 
-            databases.put(db.name, db);
-        }
-        mapDB.commit();
     }
 	
     Map<String, List<Long>> selectDbSizes(int days) {
         GregorianCalendar breakPoint = new GregorianCalendar()
         breakPoint.add(Calendar.DAY_OF_MONTH, -days)
         Map<String, List<Long>> dbSizes = new HashMap<String>();
-        BTreeMap<String, Database> databases = mapDB.getTreeMap("databases")
-        databases.values().each { Database db -> 
-            List<Long> sizes = new ArrayList<Long>();
-            db.hist.tailMap(breakPoint.time).values().each { HistSize h -> sizes.add(h.size) }
-            dbSizes.put(db.name, sizes);
-        }
         return dbSizes
     }
 	

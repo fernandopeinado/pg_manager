@@ -20,13 +20,12 @@
         </pluginRepository>	
     </pluginRepositories>
     <properties>
-        <groovy_version>2.4.7</groovy_version>
+        <groovy_version>2.4.12</groovy_version>
+        <h2_version>1.4.196</h2_version>
         <jackson_databind_version>2.4.5.1</jackson_databind_version>
         <slf4j_log4j_version>1.7.12</slf4j_log4j_version>
-        <mapdb_version>1.0.9</mapdb_version>
-        <postgresql_version>9.2-1004-jdbc41</postgresql_version>
-        <quartz_version>2.2.3</quartz_version>
-        <spring_version>4.2.7.RELEASE</spring_version>
+        <postgresql_version>42.1.4</postgresql_version>
+        <spring_version>4.3.11.RELEASE</spring_version>
     </properties>
     <dependencies>
         <dependency>
@@ -82,30 +81,19 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>${h2_version}</version>
+        </dependency>
+        <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
             <version>${jackson_databind_version}</version>
         </dependency>
         <dependency>
-            <groupId>org.mapdb</groupId>
-            <artifactId>mapdb</artifactId>
-            <version>${mapdb_version}</version>
-        </dependency>
-        <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
             <version>${slf4j_log4j_version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.quartz-scheduler</groupId>
-            <artifactId>quartz</artifactId>
-            <version>${quartz_version}</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>c3p0</artifactId>
-                    <groupId>c3p0</groupId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -164,7 +152,7 @@
             <plugin>
                 <groupId>org.codehaus.gmavenplus</groupId>
                 <artifactId>gmavenplus-plugin</artifactId>
-                <version>1.5</version>
+                <version>1.6</version>
                 <executions>
                     <execution>
                         <goals>
@@ -172,8 +160,8 @@
                             <goal>addTestSources</goal>
                             <goal>generateStubs</goal>
                             <goal>compile</goal>
-                            <goal>testGenerateStubs</goal>
-                            <goal>testCompile</goal>
+                            <goal>generateTestStubs</goal>
+                            <goal>compileTests</goal>
                             <goal>removeStubs</goal>
                             <goal>removeTestStubs</goal>
                         </goals>
@@ -203,7 +191,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.3</version>
+                <version>3.7.0</version>
                 <configuration>
                     <source>1.8</source>
                     <target>1.8</target>

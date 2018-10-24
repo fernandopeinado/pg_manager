@@ -1,16 +1,18 @@
 package br.com.cas10.pgman.service
 
-import br.com.cas10.pgman.domain.Database
 import br.com.cas10.pgman.domain.Parameter
 import br.com.cas10.pgman.domain.ParameterCategory
-import org.mapdb.BTreeMap
-import org.mapdb.DB
+import br.com.cas10.pgman.domain.PgExtension
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Qualifier
+import org.springframework.jdbc.core.RowCallbackHandler
+import org.springframework.jdbc.core.RowMapper
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 import javax.sql.DataSource
+import java.sql.ResultSet
 
 @Service
 @Transactional(readOnly = true)
@@ -19,33 +21,34 @@ class PostgresqlService {
     private NamedParameterJdbcTemplate jdbc
 
     @Autowired
-    private DatabaseService databaseService
-
-    @Autowired
-    private DB mapDB;
-
-    @Autowired
-    public void setDataSource(DataSource dataSource) {
-        jdbc = new NamedParameterJdbcTemplate(dataSource);
+    @Qualifier("postgres")
+    void setDataSource(DataSource dataSource) {
+        jdbc = new NamedParameterJdbcTemplate(dataSource)
     }
 
-    public List<Map<String,Object>> getTopRelationSizes(Integer top, String database, Long threshouldSizeBytes) {
-        NamedParameterJdbcTemplate tmpl = jdbc
-        if (database != null) {
-            tmpl = databaseService.getTemplateForDb(database);
-        }
+    Map<String, Long> getDatabaseSizes() {
+        Map<String, Long> result = new LinkedHashMap<>()
+        jdbc.query("SELECT datname, pg_database_size(datname) FROM pg_database ORDER BY datname",
+            { ResultSet rs ->
+                result[rs.getString(1)] = rs.getLong(2)
+            } as RowCallbackHandler)
+        return result
+    }
 
-        Map params = new HashMap<String, Object>();
+    List<Map<String,Object>> getTopRelationSizes(Integer top, Long threshouldSizeBytes) {
+        NamedParameterJdbcTemplate tmpl = jdbc
+
+        Map params = new HashMap<String, Object>()
         if (threshouldSizeBytes == null) {
-            threshouldSizeBytes = 0;
+            threshouldSizeBytes = 0
         }
         params["threshouldSizeBytes"] = threshouldSizeBytes
 
-        String topClause = "";
+        String topClause = ""
         if (top != null && top > 0) {
             topClause = "LIMIT :top"
-            params["top"] = top;
-        };
+            params["top"] = top
+        }
 
         String query = """
 			SELECT C.oid,
@@ -63,18 +66,15 @@ class PostgresqlService {
 			ORDER BY pg_total_relation_size(C.oid) DESC
 			${topClause}
 			"""
-        List<Map<String,Object>> result = tmpl.queryForList(query, params);
-        return result;
+        List<Map<String,Object>> result = tmpl.queryForList(query, params)
+        return result
     }
 
-    Map<String,Object> getTableDetails(Long oid, String database) {
+    Map<String,Object> getTableDetails(Long oid) {
         Map<String,Object> result = [:]
         NamedParameterJdbcTemplate tmpl = jdbc
-        if (database != null) {
-            tmpl = databaseService.getTemplateForDb(database);
-        }
 
-        Map params = new HashMap<String, Object>();
+        Map params = new HashMap<String, Object>()
         params["oid"] = oid
 
         String query = """
@@ -105,22 +105,10 @@ class PostgresqlService {
             result['toasts'] << ['toast' : row.toast, 'toastSize' : row.toastSize, 'toastIndex' : row.toastIndex, 'toastIndexSize' : row.toastIndexSize]
         }
 
-        return result;
+        return result
     }
 
-    public List<Map<String,Object>> getTopDatabaseSizes(Integer top) {
-        List<Map<String,Object>> result = new ArrayList<>();
-        BTreeMap<String, Database> databases = mapDB.getTreeMap("databases");
-        databases.values().each { Database database ->
-            result.add(["dbname": database.name, "size": database.prettyPrintSize, "_sizeBytes": database.size]);
-        }
-        Collections.sort(result, { Map<String,Object> o1, Map<String,Object> o2 ->
-                return -o1._sizeBytes.compareTo(o2._sizeBytes);
-            } as Comparator<Map<String,Object>>)
-        return result;
-    }
-
-    public List<Map<String,Object>> getDatabaseStats() {
+    List<Map<String,Object>> getDatabaseStats() {
         String query = """
             SELECT datname as database, numbackends, xact_commit, xact_rollback, blks_read, blks_hit, 
                     tup_returned, tup_fetched, tup_inserted, tup_updated, tup_deleted 
@@ -128,11 +116,11 @@ class PostgresqlService {
             WHERE datname not like 'template%'
             ORDER BY datname
             """
-        List<Map<String,Object>> result = jdbc.queryForList(query, new HashMap<String, Object>());
-        return result;
+        List<Map<String,Object>> result = jdbc.queryForList(query, new HashMap<String, Object>())
+        return result
     }
 
-    public List<Map<String,Object>> getCacheStats() {
+    List<Map<String,Object>> getCacheStats() {
         String query = """
 			SELECT datname as database, 
 				round(CAST(((xact_rollback::float * 100) / (xact_commit + xact_rollback))AS numeric),4) AS rollback_rate, 
@@ -141,12 +129,12 @@ class PostgresqlService {
 			WHERE (blks_read + blks_hit) > 0 AND (xact_commit + xact_rollback) > 0 
 			ORDER BY datname
 			"""
-        List<Map<String,Object>> result = jdbc.queryForList(query, new HashMap<String, Object>());
-        return result;
+        List<Map<String,Object>> result = jdbc.queryForList(query, new HashMap<String, Object>())
+        return result
     }
 
-    public List<Map<String,Object>> getTopStatements(Integer top) {
-        if (!top) top = 20;
+    List<Map<String,Object>> getTopStatements(Integer top) {
+        if (!top) top = 20
         String query = """
 			SELECT DATNAME as DATABASE, 
 				CALLS,
@@ -158,15 +146,12 @@ class PostgresqlService {
 			ORDER BY TOTAL_TIME DESC
 			LIMIT :top
 			"""
-        List<Map<String,Object>> result = jdbc.queryForList(query, ["top":top]);
-        return result;
+        List<Map<String,Object>> result = jdbc.queryForList(query, ["top":top])
+        return result
     }
 
-    public List<Map<String, Object>> getMissingIndexesForForeignKeys(String database) {
+    List<Map<String, Object>> getMissingIndexesForForeignKeys() {
         NamedParameterJdbcTemplate tmpl = jdbc
-        if (database != null) {
-            tmpl = databaseService.getTemplateForDb(database);
-        }
         String query = """select 'create index ' || relname || '_' ||
 			         array_to_string(column_name_list, '_') || '_idx on ' || conrelid ||
 			         ' (' || array_to_string(column_name_list, ',') || ')' as command
@@ -195,17 +180,17 @@ class PostgresqlService {
 			                      and indkey::text = array_to_string(column_list, ' ')
 			where indexrelid is null
 			order by 1"""
-        List<Map<String,Object>> result = tmpl.queryForList(query, new HashMap<String, Object>());
-        return result;
+        List<Map<String,Object>> result = tmpl.queryForList(query, new HashMap<String, Object>())
+        return result
     }
 
-    public String getVersion() {
+    String getVersion() {
         String query = """SELECT version() AS version"""
-        List<Map<String,Object>> result = jdbc.queryForList(query, [:]);
-        return result[0].version;
+        List<Map<String,Object>> result = jdbc.queryForList(query, [:])
+        return result[0].version
     }
 
-    public List<Map<String,Object>> getActivity() {
+    List<Map<String,Object>> getActivity() {
         String query = 	"""
 			SELECT
 				pg_stat_activity.pid AS pid,
@@ -227,11 +212,11 @@ class PostgresqlService {
 			ORDER BY
 				EXTRACT(epoch FROM (NOW() - pg_stat_activity.query_start)) DESC"""
 
-        List<Map<String,Object>> result = jdbc.queryForList(query, [:]);
-        return result;
+        List<Map<String,Object>> result = jdbc.queryForList(query, [:])
+        return result
     }
 
-    public List<ParameterCategory> getSettings(boolean nonDefaultOnly) {
+    List<ParameterCategory> getSettings(boolean nonDefaultOnly) {
         String clause = ""
         if (nonDefaultOnly) {
             clause = "WHERE setting <> boot_val"
@@ -245,7 +230,7 @@ class PostgresqlService {
 			FROM pg_settings ${clause}
 			ORDER BY category, name"""
 
-        List<Map<String,Object>> result = jdbc.queryForList(query, [:]);
+        List<Map<String,Object>> result = jdbc.queryForList(query, [:])
         List<ParameterCategory> list = new ArrayList<>()
         ParameterCategory category = new ParameterCategory("")
         result.each { item ->
@@ -258,12 +243,61 @@ class PostgresqlService {
                 val += " (${item.unit})"
             }
             category.parameters << new Parameter(item.name, val, item.boot_val, item.extra_desc, item.source)
-        };
-        return list;
+        }
+        return list
+    }
+
+    void initDatabase() {
+        if (!tableExists("pg_stat_statements")) {
+            createExtension("PG_STAT_STATEMENTS")
+        }
+    }
+
+    boolean tableExists(String table) {
+        try {
+            jdbc.queryForObject("SELECT 1 FROM ${table} LIMIT 1", Collections.emptyMap(), Number.class)
+            return true
+        } catch (Exception e) {
+            return false
+        }
+    }
+
+    List<PgExtension> getExtensions() {
+        Map params = new HashMap<String, Object>()
+        String query = """
+            select e.name,
+                e.default_version,
+                e.installed_version,
+                e.comment
+            from pg_available_extensions e
+			ORDER BY e.name
+			"""
+        List<PgExtension> result = jdbc.query(query, params, { ResultSet row, int i ->
+            new PgExtension(name: row.getString(1),
+                    defaultVersion: row.getString(2),
+                    installedVersion: row.getString(3),
+                    comment: row.getString(4))
+        } as RowMapper<PgExtension>)
+        return result
     }
 
     @Transactional(readOnly = false)
-    public void resetStatementsStats() {
+    void createExtension(String extName) {
+        execute("CREATE EXTENSION ${extName}")
+    }
+
+    @Transactional(readOnly = false)
+    void resetStatementsStats() {
         jdbc.queryForList("SELECT pg_stat_statements_reset()", new HashMap<String, Object>())
     }
+
+    @Transactional(readOnly = false)
+    void execute(String sql) {
+        try {
+            jdbc.update(sql, Collections.emptyMap())
+        } catch (Exception e) {
+            e.printStackTrace()
+        }
+    }
+
 }
