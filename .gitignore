@@ -12,3 +12,6 @@ rebel.xml
 /target
 /bower_components/
 /README.md~
+/utils/dev-config.yml
+node_modules
+/src/main/webapp/app

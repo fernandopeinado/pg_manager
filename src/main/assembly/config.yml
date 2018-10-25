@@ -1,0 +1,14 @@
+---
+
+pgman:
+  port: 8080
+  username: "admin"
+  password: "admin"
+
+  data-source:
+    url: "jdbc:postgresql://127.0.0.1:5432/wms_ceadis"
+    username: "kasten"
+    password: "kasten"
+
+  archive:
+    dir: "${pgman.home}/archive"
