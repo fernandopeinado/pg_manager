@@ -14,7 +14,7 @@
 			<source>src/main/assembly/pgman</source>
 		</file>
 		<file>
-			<source>${project.build.directory}/${project.build.finalName}.war</source>
+			<source>${project.build.directory}/${project.build.finalName}.${project.packaging}</source>
 		</file>
 	</files>
 </assembly>
