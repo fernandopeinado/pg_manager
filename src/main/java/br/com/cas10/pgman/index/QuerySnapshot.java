@@ -1,13 +1,7 @@
 package br.com.cas10.pgman.index;
 
-import org.elasticsearch.common.xcontent.XContentBuilder;
-import org.elasticsearch.common.xcontent.XContentFactory;
-
-import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
-
-import static org.apache.commons.lang3.time.DateFormatUtils.ISO_8601_EXTENDED_DATETIME_TIME_ZONE_FORMAT;
 
 public class QuerySnapshot implements IndexedContent {
 
@@ -123,6 +117,7 @@ public class QuerySnapshot implements IndexedContent {
         map.put("maxTime", maxTime);
         map.put("meanTime", meanTime);
         map.put("rows", rows);
+        map.put("rowsAvg", (calls != null && calls != 0) ? (Long) (rows / calls) : 0L);
         map.put("blockReadTime", blockReadTime);
         map.put("blockWriteTime", blockWriteTime);
         return map;
