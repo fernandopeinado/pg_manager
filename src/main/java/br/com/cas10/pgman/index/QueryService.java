@@ -44,6 +44,19 @@ public class QueryService {
                         timestamp.put("type", "date");
                         timestamp.put("format", "yyyy-MM-dd HH:mm:ss||yyyy-MM-dd||epoch_millis");
                         properties.put("@timestamp", timestamp);
+
+                        Map<String, Object> query = new HashMap<>();
+                        query.put("type", "text");
+                        {
+                            Map<String, Object> fields = new HashMap<>();
+                            {
+                                Map<String, Object> keyword = new HashMap<>();
+                                keyword.put("type", "keyword");
+                                keyword.put("ignore_above", 10240);
+                                fields.put("keyword", keyword);
+                            }
+                            query.put("fields", fields);
+                        }
                     }
                     jsonMap.put("properties", properties);
                 }
