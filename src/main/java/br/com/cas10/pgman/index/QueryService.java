@@ -57,6 +57,7 @@ public class QueryService {
                             }
                             query.put("fields", fields);
                         }
+                        properties.put("query", query);
                     }
                     jsonMap.put("properties", properties);
                 }
