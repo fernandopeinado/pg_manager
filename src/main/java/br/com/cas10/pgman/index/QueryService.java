@@ -19,6 +19,7 @@ import static org.apache.commons.lang3.time.DateFormatUtils.ISO_8601_EXTENDED_DA
 @Service
 public class QueryService {
 
+    private static final String INDEX_NAME = "postgres-query";
     private static final String INDEX_NAME_PREFIX = "postgres-query-";
 
     private RestHighLevelClient elasticsearch;
@@ -31,10 +32,10 @@ public class QueryService {
     public void initializeIndex() {
         try {
             final String templatePattern = INDEX_NAME_PREFIX + "*";
-            IndexTemplatesExistRequest request = new IndexTemplatesExistRequest(templatePattern);
+            IndexTemplatesExistRequest request = new IndexTemplatesExistRequest(INDEX_NAME);
             boolean exists = elasticsearch.indices().existsTemplate(request, RequestOptions.DEFAULT);
             if (!exists) {
-                PutIndexTemplateRequest createRequest = new PutIndexTemplateRequest(templatePattern);
+                PutIndexTemplateRequest createRequest = new PutIndexTemplateRequest(INDEX_NAME);
                 createRequest.patterns(Arrays.asList(templatePattern));
                 Map<String, Object> jsonMap = new HashMap<>();
                 {

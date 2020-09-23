@@ -111,6 +111,7 @@
         </plugins>
     </build>
     <profiles>
+    <!--
         <profile>
             <id>yarn-install</id>
             <activation>
@@ -181,5 +182,6 @@
                 </plugins>
             </build>
         </profile>
+        -->
     </profiles>
 </project>
