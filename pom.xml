@@ -10,15 +10,14 @@
 
     <groupId>br.com.cas10.pgman</groupId>
     <artifactId>pgman</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.1.0</version>
     <packaging>jar</packaging>
     <name>pgadmin</name>
 
     <properties>
         <elasticsearch.version>7.4.1</elasticsearch.version>
-        <postgresql_version>42.2.4</postgresql_version>
-        <node_version>v12.14.1</node_version>
-        <yarn_version>v1.21.1</yarn_version>
+        <postgresql_version>42.2.23</postgresql_version>
+        <docker.host>unix:///var/run/docker.sock</docker.host>
     </properties>
 
     <dependencies>
@@ -30,22 +29,10 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-jdbc</artifactId>
         </dependency>
-        <!--
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-security</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
-        -->
-
         <dependency>
             <groupId>org.elasticsearch</groupId>
             <artifactId>elasticsearch</artifactId>
         </dependency>
-
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
@@ -108,80 +95,44 @@
                     <skip>true</skip>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>io.fabric8</groupId>
+                <artifactId>docker-maven-plugin</artifactId>
+                <version>0.36.1</version>
+                <executions>
+                    <execution>
+                        <id>docker-build</id>
+                        <goals>
+                            <goal>build</goal>
+                        </goals>
+                        <phase>package</phase>
+                    </execution>
+
+                    <execution>
+                        <id>docker-push</id>
+                        <goals>
+                            <goal>push</goal>
+                        </goals>
+                        <phase>deploy</phase>
+                    </execution>
+                </executions>
+
+                <configuration>
+                    <images>
+                        <!-- App -->
+                        <image>
+                            <name>nexus3.touchtec.com.br:5001/%g:%l</name>
+                            <build>
+                                <contextDir>pgman</contextDir>
+                                <assembly>
+                                    <targetDir>.</targetDir>
+                                    <descriptor>pgman/pgman.xml</descriptor>
+                                </assembly>
+                            </build>
+                        </image>
+                    </images>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
-    <profiles>
-    <!--
-        <profile>
-            <id>yarn-install</id>
-            <activation>
-                <file>
-                    <exists>package.json</exists>
-                    <missing>node</missing>
-                </file>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>com.github.eirslett</groupId>
-                        <artifactId>frontend-maven-plugin</artifactId>
-                        <version>1.6</version>
-                        <executions>
-                            <execution>
-                                <id>install node and yarn</id>
-                                <goals>
-                                    <goal>install-node-and-yarn</goal>
-                                </goals>
-                                <phase>generate-resources</phase>
-                                <configuration>
-                                    <nodeVersion>${node_version}</nodeVersion>
-                                    <yarnVersion>${yarn_version}</yarnVersion>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
-            <id>yarn-build</id>
-            <activation>
-                <file>
-                    <exists>package.json</exists>
-                </file>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>com.github.eirslett</groupId>
-                        <artifactId>frontend-maven-plugin</artifactId>
-                        <version>1.6</version>
-                        <executions>
-                            <execution>
-                                <id>yarn install</id>
-                                <goals>
-                                    <goal>yarn</goal>
-                                </goals>
-                                <phase>generate-resources</phase>
-                                <configuration>
-                                    <arguments>install</arguments>
-                                </configuration>
-                            </execution>
-                            <execution>
-                                <id>yarn build</id>
-                                <goals>
-                                    <goal>yarn</goal>
-                                </goals>
-                                <phase>generate-resources</phase>
-                                <configuration>
-                                    <arguments>run build</arguments>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        -->
-    </profiles>
 </project>

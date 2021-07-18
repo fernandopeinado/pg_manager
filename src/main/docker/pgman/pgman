@@ -1,0 +1,49 @@
+#!/bin/bash
+
+set -euo pipefail
+
+usage() {
+    echo "usage: pgman run|start|stop"
+}
+
+pgman_run() {
+    PGMAN_SYS_PROPS+=" -Dspring.profiles.include=foreground"
+    exec $JAVA_HOME/bin/java $PGMAN_OPTS $PGMAN_SYS_PROPS -jar "$pgman_war_file"
+}
+
+is_running() {
+    [[ -f $pid_file ]] && pgrep -f "$pgman_war_file" -F "$pid_file" >/dev/null 2>&1
+}
+
+pgman_start() {
+    is_running && { echo "Already running (PID: $(cat "$pid_file"))"; return 0; }
+    nohup $JAVA_HOME/bin/java $PGMAN_OPTS $PGMAN_SYS_PROPS -jar "$pgman_war_file" \
+            </dev/null >"$logs_dir/pgman.out" 2>&1 &
+    echo $! > "$pid_file"
+}
+
+pgman_stop() {
+    is_running || { echo "Not running"; return 0; }
+    pkill -F "$pid_file"
+    rm "$pid_file"
+}
+
+pgman_home=$(dirname "$(readlink -f "$BASH_SOURCE")")
+pgman_war_file=$(echo "$pgman_home"/pgman-*.jar)
+pid_file="$pgman_home/pgman.pid"
+logs_dir="$pgman_home/logs"
+
+if [[ -z ${PGMAN_OPTS-} ]]; then
+    PGMAN_OPTS="-Xms16m -Xmx128m -XX:MaxHeapFreeRatio=50"
+fi
+if [[ -z ${PGMAN_SYS_PROPS:-} ]]; then
+    PGMAN_SYS_PROPS="-Dpgman.home=$pgman_home"
+    PGMAN_SYS_PROPS+=" -Dspring.config.additional-location=$pgman_home/config.yml"
+fi
+
+mkdir -p "$logs_dir"
+
+case "${1-}" in
+    run) pgman_run ;; start) pgman_start ;; stop) pgman_stop ;; *) usage ;;
+esac
+

@@ -3,12 +3,14 @@ package br.com.cas10.pgman.jobs;
 import br.com.cas10.pgman.SqlResourceLoader;
 import br.com.cas10.pgman.index.QueryService;
 import br.com.cas10.pgman.index.QuerySnapshot;
+import org.springframework.jdbc.core.ConnectionCallback;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.sql.DataSource;
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -29,6 +31,7 @@ public class StatementsJob {
     public void collect() {
         try {
             preCollect();
+            collectMetaData();
             String query = SqlResourceLoader.getInstance().loadQuery("statements");
 
             RowMapper<QuerySnapshot> rowMapper = (ResultSet rs, int index) -> {
@@ -51,6 +54,16 @@ public class StatementsJob {
             queryService.save(result.toArray(new QuerySnapshot[result.size()]));
         } finally {
             postColelct();
+        }
+    }
+
+    private void collectMetaData() {
+        if (!SqlResourceLoader.getInstance().hasMetaData()) {
+            ConnectionCallback callback = (Connection con) -> {
+                SqlResourceLoader.getInstance().collectMetaData(con);
+                return null;
+            };
+            jdbc.getJdbcOperations().execute(callback);
         }
     }
 

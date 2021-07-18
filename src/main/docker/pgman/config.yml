@@ -5,11 +5,11 @@ spring:
 
 pgman:
   dataSource:
-    url: "jdbc:postgresql://127.0.0.1:5432/udtp"
+    url: "jdbc:postgresql://172.17.42.1:5432/postgres"
     username: "postgres"
     password: "postgres"
   elasticsearch:
-    host: "127.0.0.1"
+    host: "172.17.42.1"
     port: 9200
     username: "pgman"
     password: "32G?eCJHSPLudebT"
