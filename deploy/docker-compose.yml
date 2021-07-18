@@ -5,7 +5,7 @@ services:
     build:
       context: elasticsearch/
       args:
-        ELK_VERSION: $ELK_VERSION
+        ELK_VERSION: 7.13.3
     volumes:
       - type: bind
         source: ./elasticsearch/config/elasticsearch.yml
@@ -28,7 +28,7 @@ services:
     build:
       context: kibana/
       args:
-        ELK_VERSION: $ELK_VERSION
+        ELK_VERSION: 7.13.3
     volumes:
       - type: bind
         source: ./kibana/config/kibana.yml
@@ -42,7 +42,7 @@ services:
       - elasticsearch
 
   pgman:
-    image: nexus3.touchtec.com.br:5001/pgman:latest
+    image: nexus3.touchtec.com.br:5001/pgman:1.1.0
     environment:
       PGMAN_DATA_SOURCE_URL: "jdbc:postgresql://172.17.42.1:5432/udtp"
       PGMAN_DATA_SOURCE_USERNAME: "postgres"
