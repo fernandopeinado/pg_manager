@@ -31,6 +31,7 @@ public class QueryService {
     private static final String INDEX_NAME = "postgres-query";
     private static final String INDEX_NAME_PREFIX = "postgres-query-";
 
+    private boolean initialized = false;
     private RestHighLevelClient elasticsearch;
 
     public QueryService(RestHighLevelClient elasticsearch) {
@@ -39,43 +40,54 @@ public class QueryService {
 
     @PostConstruct
     public void initializeIndex() {
-        try {
-            final String templatePattern = INDEX_NAME_PREFIX + "*";
-            IndexTemplatesExistRequest request = new IndexTemplatesExistRequest(INDEX_NAME);
-            boolean exists = elasticsearch.indices().existsTemplate(request, RequestOptions.DEFAULT);
-            if (!exists) {
-                PutIndexTemplateRequest createRequest = new PutIndexTemplateRequest(INDEX_NAME);
-                createRequest.patterns(Arrays.asList(templatePattern));
-                Map<String, Object> jsonMap = new HashMap<>();
-                {
-                    Map<String, Object> properties = new HashMap<>();
+        while (!initialized) {
+            try {
+                final String templatePattern = INDEX_NAME_PREFIX + "*";
+                IndexTemplatesExistRequest request = new IndexTemplatesExistRequest(INDEX_NAME);
+                boolean exists = elasticsearch.indices().existsTemplate(request, RequestOptions.DEFAULT);
+                if (!exists) {
+                    PutIndexTemplateRequest createRequest = new PutIndexTemplateRequest(INDEX_NAME);
+                    createRequest.patterns(Arrays.asList(templatePattern));
+                    Map<String, Object> jsonMap = new HashMap<>();
                     {
-                        Map<String, Object> timestamp = new HashMap<>();
-                        timestamp.put("type", "date");
-                        timestamp.put("format", "yyyy-MM-dd HH:mm:ss||yyyy-MM-dd||epoch_millis");
-                        properties.put("@timestamp", timestamp);
-
-                        Map<String, Object> query = new HashMap<>();
-                        query.put("type", "text");
+                        Map<String, Object> properties = new HashMap<>();
                         {
-                            Map<String, Object> fields = new HashMap<>();
+                            Map<String, Object> timestamp = new HashMap<>();
+                            timestamp.put("type", "date");
+                            timestamp.put("format", "yyyy-MM-dd HH:mm:ss||yyyy-MM-dd||epoch_millis");
+                            properties.put("@timestamp", timestamp);
+
+                            Map<String, Object> query = new HashMap<>();
+                            query.put("type", "text");
                             {
-                                Map<String, Object> keyword = new HashMap<>();
-                                keyword.put("type", "keyword");
-                                keyword.put("ignore_above", 10240);
-                                fields.put("keyword", keyword);
+                                Map<String, Object> fields = new HashMap<>();
+                                {
+                                    Map<String, Object> keyword = new HashMap<>();
+                                    keyword.put("type", "keyword");
+                                    keyword.put("ignore_above", 10240);
+                                    fields.put("keyword", keyword);
+                                }
+                                query.put("fields", fields);
                             }
-                            query.put("fields", fields);
+                            properties.put("query", query);
                         }
-                        properties.put("query", query);
+                        jsonMap.put("properties", properties);
                     }
-                    jsonMap.put("properties", properties);
+                    createRequest.mapping(jsonMap);
+                    elasticsearch.indices().putTemplate(createRequest, RequestOptions.DEFAULT);
                 }
-                createRequest.mapping(jsonMap);
-                elasticsearch.indices().putTemplate(createRequest, RequestOptions.DEFAULT);
+                initialized = true;
+            } catch (Exception e) {
+                System.err.println("Erro ao conectar no elasticsearch");
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+            if (!initialized) {
+                try {
+                    System.out.println("Esperando ElasticSearch...");
+                    Thread.sleep(1000L);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 

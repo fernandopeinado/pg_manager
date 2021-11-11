@@ -2,17 +2,18 @@ version: '3.2'
 
 services:
   elasticsearch:
+    container_name: pgman_elasticksearch
     build:
       context: elasticsearch/
       args:
-        ELK_VERSION: 7.13.3
+        ELK_VERSION: 7.13.4
     volumes:
       - type: bind
         source: ./elasticsearch/config/elasticsearch.yml
         target: /usr/share/elasticsearch/config/elasticsearch.yml
         read_only: true
       - type: volume
-        source: elasticsearch
+        source: pgman_elasticsearch
         target: /usr/share/elasticsearch/data
     ports:
       - "9200:9200"
@@ -22,13 +23,14 @@ services:
       ELASTIC_PASSWORD: changeme
       discovery.type: single-node
     networks:
-      - elk
+      - pgman
 
   kibana:
+    container_name: pgman_kibana
     build:
       context: kibana/
       args:
-        ELK_VERSION: 7.13.3
+        ELK_VERSION: 7.13.4
     volumes:
       - type: bind
         source: ./kibana/config/kibana.yml
@@ -37,28 +39,30 @@ services:
     ports:
       - "5601:5601"
     networks:
-      - elk
+      - pgman
     depends_on:
       - elasticsearch
 
   pgman:
-    image: nexus3.touchtec.com.br:5001/pgman:1.1.0
+    container_name: pgman
+    image: nexus3.touchtec.com.br:5001/pgman
     environment:
       PGMAN_DATA_SOURCE_URL: "jdbc:postgresql://172.17.42.1:5432/udtp"
       PGMAN_DATA_SOURCE_USERNAME: "postgres"
       PGMAN_DATA_SOURCE_PASSWORD: "postgres"
-      PGMAN_ELASTICSEARCH_HOST: "elasticsearch"
+      PGMAN_ELASTICSEARCH_HOST: "pgman_elasticksearch"
       PGMAN_ELASTICSEARCH_USERNAME: "elastic"
       PGMAN_ELASTICSEARCH_PASSWORD: "changeme"
       discovery.type: single-node
     networks:
-      - elk
+      - pgman
     depends_on:
       - elasticsearch
+      - kibana
 
 networks:
-  elk:
+  pgman:
     driver: bridge
 
 volumes:
-  elasticsearch:
+  pgman_elasticsearch:
