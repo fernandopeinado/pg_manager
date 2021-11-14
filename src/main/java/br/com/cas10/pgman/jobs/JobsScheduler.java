@@ -7,9 +7,11 @@ import org.springframework.stereotype.Component;
 public class JobsScheduler {
 
     private StatementsJob statementsJob;
+    private AshJob ashJob;
 
-    public JobsScheduler(StatementsJob statementsJob) {
+    public JobsScheduler(StatementsJob statementsJob, AshJob ashJob) {
         this.statementsJob = statementsJob;
+        this.ashJob = ashJob;
     }
 
     @Scheduled(
@@ -18,4 +20,12 @@ public class JobsScheduler {
     public void statmentsJob() {
         statementsJob.collect();
     }
+
+    @Scheduled(
+            initialDelayString = "${pgman.collector.active_sessions.initialDelay:1000}",
+            fixedRateString = "${pgman.collector.active_sessions.rate:1000}")
+    public void ashJob() {
+        ashJob.collect();
+    }
+
 }

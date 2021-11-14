@@ -33,7 +33,7 @@ public class SqlResourceLoader {
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
         String baseDir = "pg" + databaseMajorVersion;
         if (databaseMajorVersion > 13) {
-            baseDir = "pg" + databaseMajorVersion;
+            baseDir = "pg13";
         }
         try (InputStream in = cl.getResourceAsStream("br/com/cas10/pgman/"+ baseDir +"/"+ queryName +".sql")) {
             return IOUtils.toString(in);

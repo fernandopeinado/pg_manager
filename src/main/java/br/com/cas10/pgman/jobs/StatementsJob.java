@@ -1,7 +1,8 @@
 package br.com.cas10.pgman.jobs;
 
 import br.com.cas10.pgman.SqlResourceLoader;
-import br.com.cas10.pgman.index.QueryService;
+import br.com.cas10.pgman.index.ExportQueue;
+import br.com.cas10.pgman.index.IndexService;
 import br.com.cas10.pgman.index.QuerySnapshot;
 import org.springframework.jdbc.core.ConnectionCallback;
 import org.springframework.jdbc.core.RowMapper;
@@ -20,11 +21,11 @@ import java.util.List;
 public class StatementsJob {
 
     private NamedParameterJdbcTemplate jdbc;
-    private QueryService queryService;
+    private ExportQueue exportQueue;
 
-    public StatementsJob(DataSource dataSource, QueryService queryService) {
+    public StatementsJob(DataSource dataSource, ExportQueue exportQueue) {
         this.jdbc = new NamedParameterJdbcTemplate(dataSource);
-        this.queryService = queryService;
+        this.exportQueue = exportQueue;
     }
 
     @Transactional
@@ -50,8 +51,12 @@ public class StatementsJob {
                 return snapshot;
             };
 
+            long timestamp = System.currentTimeMillis();
             List<QuerySnapshot> result = this.jdbc.query(query, Collections.EMPTY_MAP, rowMapper);
-            queryService.save(result.toArray(new QuerySnapshot[result.size()]));
+            for (QuerySnapshot snapshot : result) {
+                snapshot.setTimestamp(timestamp);
+                exportQueue.add(snapshot);
+            }
         } finally {
             postColelct();
         }
@@ -68,7 +73,7 @@ public class StatementsJob {
     }
 
     private void preCollect() {
-        System.out.println("Coletando " + LocalDateTime.now());
+        System.out.println("Coletando Statements " + LocalDateTime.now());
     }
 
     private void postColelct() {

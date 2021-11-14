@@ -47,9 +47,9 @@ services:
     container_name: pgman
     image: nexus3.touchtec.com.br:5001/pgman
     environment:
-      PGMAN_DATA_SOURCE_URL: "jdbc:postgresql://172.17.42.1:5432/udtp"
-      PGMAN_DATA_SOURCE_USERNAME: "postgres"
-      PGMAN_DATA_SOURCE_PASSWORD: "postgres"
+      PGMAN_DATA_SOURCE_URL: "jdbc:postgresql://172.17.0.130:5432/udtp_inovapar"
+      PGMAN_DATA_SOURCE_USERNAME: "udtp_inovapar"
+      PGMAN_DATA_SOURCE_PASSWORD: "udtp_in0v@pAr"
       PGMAN_ELASTICSEARCH_HOST: "pgman_elasticksearch"
       PGMAN_ELASTICSEARCH_USERNAME: "elastic"
       PGMAN_ELASTICSEARCH_PASSWORD: "changeme"

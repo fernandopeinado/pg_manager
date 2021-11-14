@@ -5,6 +5,7 @@ import java.util.Map;
 
 public class QuerySnapshot implements IndexedContent {
 
+    private long timestamp;
     private Long queryId;
     private String database;
     private String query;
@@ -16,6 +17,15 @@ public class QuerySnapshot implements IndexedContent {
     private Long rows;
     private Double blockReadTime;
     private Double blockWriteTime;
+
+    @Override
+    public long getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
+    }
 
     public Long getQueryId() {
         return queryId;
@@ -138,5 +148,10 @@ public class QuerySnapshot implements IndexedContent {
                 ", blockReadTime=" + blockReadTime +
                 ", blockWriteTime=" + blockWriteTime +
                 '}';
+    }
+
+    @Override
+    public String getIndexNamePrefix() {
+        return IndexService.INDEX_STATEMENTS_NAME_PREFIX;
     }
 }
