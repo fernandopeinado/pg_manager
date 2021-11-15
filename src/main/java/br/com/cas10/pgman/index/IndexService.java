@@ -43,7 +43,7 @@ public class IndexService {
             if (!initialized) {
                 try {
                     System.out.println("Esperando ElasticSearch...");
-                    Thread.sleep(1000L);
+                    Thread.sleep(5000L);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
