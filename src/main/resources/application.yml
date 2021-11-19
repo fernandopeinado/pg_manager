@@ -5,9 +5,9 @@ spring:
 
 pgman:
   dataSource:
-    url: "jdbc:postgresql://172.17.0.130:5432/udtp_inovapar"
-    username: "udtp_inovapar"
-    password: "udtp_in0v@pAr"
+    url: "jdbc:postgresql://172.17.42.1:5432/kasten"
+    username: "kasten"
+    password: "kasten"
   elasticsearch:
     host: "127.0.0.1"
     port: 9200

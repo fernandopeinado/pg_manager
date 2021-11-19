@@ -15,8 +15,17 @@ public class Main {
         ExportQueue exportQueue = ctx.getBean(ExportQueue.class);
         IndexService indexService = ctx.getBean(IndexService.class);
         while (true) {
-            IndexedContent indexedContent = exportQueue.take();
+            IndexedContent[] indexedContent = exportQueue.take();
             indexService.save(indexedContent);
+            float ocuppancy = exportQueue.ocuppancy();
+            if (ocuppancy >= 1f) {
+                System.out.println("Queue Size Error: " + (ocuppancy * 100) + "% - Flushing All");
+                exportQueue.flush();
+            } else if (ocuppancy >= .95f) {
+                System.out.println("Queue Size Critical: " + (ocuppancy * 100) + "%" );
+            } else if (ocuppancy >= .7f) {
+                System.out.println("Queue Size Warning: " + (ocuppancy * 100) + "%" );
+            }
         }
     }
 }

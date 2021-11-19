@@ -53,10 +53,8 @@ public class StatementsJob {
 
             long timestamp = System.currentTimeMillis();
             List<QuerySnapshot> result = this.jdbc.query(query, Collections.EMPTY_MAP, rowMapper);
-            for (QuerySnapshot snapshot : result) {
-                snapshot.setTimestamp(timestamp);
-                exportQueue.add(snapshot);
-            }
+            result.forEach(snapshot -> snapshot.setTimestamp(timestamp));
+            exportQueue.add(result.toArray(new QuerySnapshot[result.size()]));
         } finally {
             postColelct();
         }

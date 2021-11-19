@@ -1,5 +1,6 @@
 package br.com.cas10.pgman.index;
 
+import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.client.RequestOptions;
@@ -129,19 +130,26 @@ public class IndexService {
         return exists;
     }
 
-    public void save(IndexedContent data) {
-        if (data == null) return;
+    public void save(IndexedContent... indexedContents) {
+        if (indexedContents == null) return;
         try {
-            String date = ISO_8601_EXTENDED_DATE_FORMAT.format(data.getTimestamp());
-            Map<String, Object> content = data.toJson();
-            if (content != null) {
-                content.put("@timestamp", data.getTimestamp());
-                String indexName = data.getIndexNamePrefix() + date;
-                IndexRequest indexRequest = new IndexRequest(indexName).source(content);
-                IndexResponse response = elasticsearch.index(indexRequest, RequestOptions.DEFAULT);
+            BulkRequest batch = new BulkRequest();
+            for (IndexedContent data : indexedContents) {
+                String date = ISO_8601_EXTENDED_DATE_FORMAT.format(data.getTimestamp());
+                Map<String, Object> content = data.toJson();
+                if (content != null) {
+                    content.put("@timestamp", data.getTimestamp());
+                    String indexName = data.getIndexNamePrefix() + date;
+                    IndexRequest indexRequest = new IndexRequest(indexName).source(content);
+                    batch.add(indexRequest);
+                }
             }
+            long timeBefore = System.currentTimeMillis();
+            elasticsearch.bulk(batch, RequestOptions.DEFAULT);
+            long timeAfter = System.currentTimeMillis();
+            System.out.println("Bulk Send: Count " + batch.numberOfActions() + " in " + (timeAfter - timeBefore) + " ms");
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println("!! Bulk Send Error: " + e.getMessage());
         }
     }
 }

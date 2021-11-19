@@ -22,7 +22,7 @@ public class JobsScheduler {
     }
 
     @Scheduled(
-            initialDelayString = "${pgman.collector.active_sessions.initialDelay:1000}",
+            initialDelayString = "${pgman.collector.active_sessions.initialDelay:5000}",
             fixedRateString = "${pgman.collector.active_sessions.rate:1000}")
     public void ashJob() {
         ashJob.collect();

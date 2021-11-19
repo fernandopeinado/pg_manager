@@ -23,7 +23,7 @@ public class AshJob {
     private NamedParameterJdbcTemplate jdbc;
     private ExportQueue exportQueue;
     private Map<String, String> waitClasses = new HashMap<>();
-    private List<ActiveSession> activeSessions;
+    private List<ActiveSession> activeSessions = new LinkedList<>();
     private int samples;
     private Set<String> unsampledClasses;
 
@@ -47,7 +47,7 @@ public class AshJob {
     private void resetSamples() {
         this.samples = 0;
         this.unsampledClasses = new HashSet<>(waitClasses.keySet());
-        this.activeSessions = new ArrayList<>();
+        this.activeSessions.clear();
     }
 
     private String buildWaitClassDescription(String waitClass) {
@@ -95,15 +95,15 @@ public class AshJob {
                 this.samples++;
                 if (this.samples == SNAPSHOT_SAMPLES) {
                     System.out.println("Coletando ASH " + LocalDateTime.now());
-                    this.activeSessions.forEach(as -> {
-                        as.timestamp = timestamp;
-                        this.exportQueue.add(as);
-                    });
                     this.unsampledClasses.forEach(usc -> {
                         ActiveSession as = createUnsampledClass(usc);
-                        as.timestamp = timestamp;
-                        this.exportQueue.add(as);
+                        this.activeSessions.add(as);
                     });
+                    this.activeSessions.forEach(as -> {
+                        as.timestamp = timestamp;
+                    });
+                    this.exportQueue.add(activeSessions.toArray(
+                            new ActiveSession[activeSessions.size()]));
                     resetSamples();
                 }
             }
