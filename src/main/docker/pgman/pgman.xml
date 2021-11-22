@@ -14,9 +14,6 @@
 			<source>src/main/docker/pgman/pgman</source>
 		</file>
 		<file>
-			<source>src/main/docker/pgman/kibana-config-export.ndjson</source>
-		</file>
-		<file>
 			<source>${project.build.directory}/${project.build.finalName}.${project.packaging}</source>
 		</file>
 	</files>
