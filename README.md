@@ -1,75 +1,68 @@
-pg_manager
-==========
+# pg_manager
 
-PostgreSQL Enterprise Manager, for 9.X and above
+PostgreSQL Manager, para Postgresql 9.6+ 
 
-Language: Groovy, Java and HMTL 5
+## Infraestrutura
 
-Screenshots
-===========
+- Agente PGMAN: extrai as informações do banco de dados e envia para o ELASTICSEARCH
+- Elastic Search: é o repositório dos dados coletados 
+- Kibana: interface para o monitoramento e descoberta
 
-![alt tag](https://raw.github.com/fernandopeinado/pg_manager/master/screenshot1.png)
+## PostgreSQL Environment
 
-Installation Procedure
-======================
+postgres.conf: carrege a extesão contrib `pg_stat_staments`
 
-Application Environment
------------------------
+```
+shared_preload_libraries = 'pg_stat_statements'
+pg_stat_statements.max = 10000
+pg_stat_statements.track = all
+track_io_timing = on
+track_activity_query_size = 10240
+```
 
-* JDK 8
-* Tomcat 7
+no banco de dados: 
+```
+CREATE EXTENSION PG_STAT_STATEMENTS
+```
 
-server.xml: add Datasource Resource and configure 
+para a conexão do agente com o banco será necessário um usuário com permissões para ler e resetar a PG_STAT_STATEMENTS, 
+e o deve haver liberação para a conexão do agente com o banco de dados no `pg_hba.conf`. 
 
-<pre>
-  &lt;GlobalNamingResources&gt;
-    &lt;Resource name="jdbc/pgman" auth="Container"
-          factory="org.apache.tomcat.jdbc.pool.DataSourceFactory"
-          type="javax.sql.DataSource"
-          driverClassName="org.postgresql.Driver"
-          url="jdbc:postgresql:postgres"
-          defaultAutoCommit="false"
-          username="postgres"
-          password=""
-          maxActive="10"
-          testOnBorrow="true"
-          validationQuery="SELECT 1"
-          validationQueryTimeout="60"
-          fairQueue="true"
-          /&gt;
+## Fazendo o build
 
-  &lt;/GlobalNamingResources&gt;
+- maven 3.3+
+- Java 11+
+- docker
 
-  &lt;Context docBase="/opt/deploy/pgman.war" path="/pgman" reloadable="false"/&gt;
-</pre>
+```bash
+mvn clean install
+mvn docker:push
+```
 
-context.xml: add datasource link
+## Subindo tudo com docker-compose
 
-<pre>
-  &lt;ResourceLink name="jdbc/pgman" global="jdbc/pgman" type="javax.sql.DataSource" /&gt;
-</pre>
+Use a pasta `deploy` como estrutura base para a criação de um ambiente completo. Nele temos as configurações do 
+Elasticsearch, Kibana e do agente. 
 
+Edite o arquivo `pgman.env` modificando principalmente os dados do acesso ao banco de dados:
 
-tomcat-users.xml
+```
+PGMAN_DATA_SOURCE_URL=jdbc:postgresql://172.17.42.1:5432/postgres
+PGMAN_DATA_SOURCE_USERNAME=postgres
+PGMAN_DATA_SOURCE_PASSWORD=postgres
+```
 
-<pre>
-&lt;tomcat-users&gt;
-	&lt;role rolename="pgman" /&gt;
-	&lt;user username="pgman" password="pgman" roles="pgman" /&gt;
-&lt;/tomcat-users&gt;
-</pre>
+Se necessário modifique a versão do agente do pgman que deseja usar:
 
-PostgreSQL Environment
-----------------------
+```yaml
+  pgman:
+    container_name: pgman
+    image: "pgman:<VERSAO_AQUI>"
+```
 
-* PostgreSQL Server should be running on the same machine of this application.
-* pg_hba.conf: Access must be in "trust" mode for user postgres from the same host (127.0.0.1)
-* postgres.conf: load the contrib extension pg_stat_staments
+Rode `docker-compose up -d`
 
-<pre>
-  shared_preload_libraries = 'pg_stat_statements'
-  pg_stat_statements.max = 10000
-  pg_stat_statements.track = all
-  track_io_timing = on
-  track_activity_query_size = 10240
-</pre>
+## Instalando os Paineis
+
+Carregue os paineis importanto o arquivo `kibana-saved-objects.ndjson` da pasta deploy no kibana. Algus ajustes 
+posteriores deverão ser feitos, principalmente em relação a thresholds nos gráficos.

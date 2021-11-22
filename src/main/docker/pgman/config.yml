@@ -11,6 +11,6 @@ pgman:
   elasticsearch:
     host: "172.17.42.1"
     port: 9200
-    username: "pgman"
-    password: "32G?eCJHSPLudebT"
+    username: "elastic"
+    password: "changeme"
     protocol: "http"

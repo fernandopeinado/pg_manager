@@ -2,7 +2,7 @@ select st.queryid as queryid
     , db.datname as database
     , st.query as query
     , st.calls as calls
-    , st.total_exec_time as totalTime
+    , st.total_exec_time + st.total_plan_time as totalTime
     , st.min_exec_time as minTime
     , st.max_exec_time as maxTime
     , st.mean_exec_time as meanTime

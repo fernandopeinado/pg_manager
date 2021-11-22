@@ -10,7 +10,7 @@ pgman:
     password: "postgres"
   elasticsearch:
     host: "127.0.0.1"
-    port: 29200
-    username: "touch"
-    password: "touch10"
+    port: 9200
+    username: "elastic"
+    password: "changeme"
     protocol: "http"

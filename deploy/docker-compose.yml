@@ -2,7 +2,7 @@ version: '3.2'
 
 services:
   elasticsearch:
-    container_name: pgman_elasticksearch
+    container_name: pgman_elasticsearch
     build:
       context: elasticsearch/
       args:
@@ -45,15 +45,8 @@ services:
 
   pgman:
     container_name: pgman
-    image: nexus3.touchtec.com.br:5001/pgman
-    environment:
-      PGMAN_DATA_SOURCE_URL: "jdbc:postgresql://172.17.42.1:5432/postgres"
-      PGMAN_DATA_SOURCE_USERNAME: "postgres"
-      PGMAN_DATA_SOURCE_PASSWORD: "postgres"
-      PGMAN_ELASTICSEARCH_HOST: "pgman_elasticksearch"
-      PGMAN_ELASTICSEARCH_USERNAME: "elastic"
-      PGMAN_ELASTICSEARCH_PASSWORD: "changeme"
-      discovery.type: single-node
+    image: "pgman:latest"
+    env_file: pgman.env
     networks:
       - pgman
     depends_on:

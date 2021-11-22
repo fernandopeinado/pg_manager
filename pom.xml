@@ -10,7 +10,7 @@
 
     <groupId>br.com.cas10.pgman</groupId>
     <artifactId>pgman</artifactId>
-    <version>1.4.0</version>
+    <version>1.4.0-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>pgadmin</name>
 
@@ -71,8 +71,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.7.0</version>
                 <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
+                    <source>11</source>
+                    <target>11</target>
                 </configuration>
             </plugin>
             <plugin>
@@ -127,7 +127,7 @@
                     <images>
                         <!-- App -->
                         <image>
-                            <name>nexus3.touchtec.com.br:5001/%g:%l</name>
+                            <name>%g:%l</name>
                             <build>
                                 <contextDir>pgman</contextDir>
                                 <assembly>
@@ -135,6 +135,7 @@
                                     <descriptor>pgman/pgman.xml</descriptor>
                                 </assembly>
                             </build>
+                            <registry>nexus3.touchtec.com.br:5001</registry>
                         </image>
                     </images>
                 </configuration>
