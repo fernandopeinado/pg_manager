@@ -5,3 +5,5 @@ transport.tcp.port: 9300
 xpack.license.self_generated.type: basic
 xpack.security.enabled: true
 xpack.monitoring.collection.enabled: true
+http.cors.enabled: true
+http.cors.allow-origin: "*"
