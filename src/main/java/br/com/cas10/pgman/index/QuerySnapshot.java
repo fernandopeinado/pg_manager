@@ -17,6 +17,7 @@ public class QuerySnapshot implements IndexedContent {
     private Long rows;
     private Double blockReadTime;
     private Double blockWriteTime;
+    private String instanceName;
 
     @Override
     public long getTimestamp() {
@@ -115,6 +116,14 @@ public class QuerySnapshot implements IndexedContent {
         this.blockWriteTime = blockWriteTime;
     }
 
+    public String getInstanceName() {
+        return instanceName;
+    }
+
+    public void setInstanceName(String instanceName) {
+        this.instanceName = instanceName;
+    }
+
     @Override
     public Map<String, Object> toJson() {
         Map<String, Object> map = new LinkedHashMap<>();
@@ -130,6 +139,7 @@ public class QuerySnapshot implements IndexedContent {
         map.put("rowsAvg", (calls != null && calls != 0) ? (Long) (rows / calls) : 0L);
         map.put("blockReadTime", blockReadTime);
         map.put("blockWriteTime", blockWriteTime);
+        map.put("instanceName", instanceName);
         return map;
     }
 
@@ -147,6 +157,7 @@ public class QuerySnapshot implements IndexedContent {
                 ", rows=" + rows +
                 ", blockReadTime=" + blockReadTime +
                 ", blockWriteTime=" + blockWriteTime +
+                ", instanceName=" + instanceName +
                 '}';
     }
 

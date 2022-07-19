@@ -18,6 +18,7 @@ public class ActiveSession implements IndexedContent {
     public String waitClass;
     public String backendType;
     public Double value;
+    public String instanceName;
 
     @Override
     public long getTimestamp() {
@@ -40,6 +41,7 @@ public class ActiveSession implements IndexedContent {
         json.put("event", event);
         json.put("waitClass", waitClass);
         json.put("backendType", backendType);
+        json.put("instanceName", instanceName);
         json.put("value", value);
         return json;
     }

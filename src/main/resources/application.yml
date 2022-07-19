@@ -4,6 +4,7 @@ spring:
   task.scheduling.pool.size: 4
 
 pgman:
+  instanceName: "postgres"
   dataSource:
     url: "jdbc:postgresql://172.17.42.1:5432/postgres"
     username: "postgres"

@@ -1,8 +1,8 @@
 package br.com.cas10.pgman.jobs;
 
+import br.com.cas10.pgman.PgmanProperties;
 import br.com.cas10.pgman.SqlResourceLoader;
 import br.com.cas10.pgman.index.ExportQueue;
-import br.com.cas10.pgman.index.IndexService;
 import br.com.cas10.pgman.index.QuerySnapshot;
 import org.springframework.jdbc.core.ConnectionCallback;
 import org.springframework.jdbc.core.RowMapper;
@@ -20,10 +20,12 @@ import java.util.List;
 @Service
 public class StatementsJob {
 
+    private PgmanProperties pgmanProperties;
     private NamedParameterJdbcTemplate jdbc;
     private ExportQueue exportQueue;
 
-    public StatementsJob(DataSource dataSource, ExportQueue exportQueue) {
+    public StatementsJob(DataSource dataSource, ExportQueue exportQueue, PgmanProperties pgmanProperties) {
+        this.pgmanProperties = pgmanProperties;
         this.jdbc = new NamedParameterJdbcTemplate(dataSource);
         this.exportQueue = exportQueue;
     }
@@ -37,6 +39,7 @@ public class StatementsJob {
 
             RowMapper<QuerySnapshot> rowMapper = (ResultSet rs, int index) -> {
                 QuerySnapshot snapshot = new QuerySnapshot();
+                snapshot.setInstanceName(pgmanProperties.getInstanceName());
                 snapshot.setQueryId(rs.getLong("queryid"));
                 snapshot.setDatabase(rs.getString("database"));
                 snapshot.setQuery(rs.getString("query"));

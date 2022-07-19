@@ -10,7 +10,7 @@
 
     <groupId>br.com.cas10.pgman</groupId>
     <artifactId>pgman</artifactId>
-    <version>1.5.0</version>
+    <version>1.6.0</version>
     <packaging>jar</packaging>
     <name>pgadmin</name>
 

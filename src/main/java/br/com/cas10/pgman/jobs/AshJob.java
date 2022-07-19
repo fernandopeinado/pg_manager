@@ -1,5 +1,6 @@
 package br.com.cas10.pgman.jobs;
 
+import br.com.cas10.pgman.PgmanProperties;
 import br.com.cas10.pgman.SqlResourceLoader;
 import br.com.cas10.pgman.ash.ActiveSession;
 import br.com.cas10.pgman.index.ExportQueue;
@@ -20,6 +21,7 @@ public class AshJob {
 
     static final int SNAPSHOT_SAMPLES = 15;
 
+    private PgmanProperties pgmanProperties;
     private NamedParameterJdbcTemplate jdbc;
     private ExportQueue exportQueue;
     private Map<String, String> waitClasses = new HashMap<>();
@@ -27,7 +29,8 @@ public class AshJob {
     private int samples;
     private Set<String> unsampledClasses;
 
-    public AshJob(DataSource dataSource, ExportQueue snapshots) {
+    public AshJob(DataSource dataSource, ExportQueue snapshots, PgmanProperties pgmanProperties) {
+        this.pgmanProperties = pgmanProperties;
         this.jdbc = new NamedParameterJdbcTemplate(dataSource);
         this.exportQueue = snapshots;
         this.waitClasses.put("CPU", "00");
@@ -60,6 +63,7 @@ public class AshJob {
 
     private ActiveSession createUnsampledClass(String waitClass) {
         ActiveSession session = new ActiveSession();
+        session.instanceName = pgmanProperties.getInstanceName();
         session.waitClass = buildWaitClassDescription(waitClass);
         session.value = 0d;
         return session;
@@ -72,6 +76,7 @@ public class AshJob {
         if (query != null) {
             RowMapper<ActiveSession> rowMapper = (ResultSet rs, int index) -> {
                 ActiveSession session = new ActiveSession();
+                session.instanceName = pgmanProperties.getInstanceName();
                 session.pid = "" + rs.getInt(1);
                 session.database = rs.getString(2);
                 session.username = rs.getString(3);
