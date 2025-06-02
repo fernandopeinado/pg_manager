@@ -12,6 +12,7 @@ public class PgmanProperties {
 
   private DataSource dataSource = new DataSource();
   private String instanceName;
+  private String maxQueryDuration;
 
   public DataSource getDataSource() {
     return dataSource;
@@ -28,6 +29,14 @@ public class PgmanProperties {
 
   public void setInstanceName(String instanceName) {
     this.instanceName = instanceName;
+  }
+
+  public String getMaxQueryDuration() {
+    return maxQueryDuration;
+  }
+
+  public void setMaxQueryDuration(String maxQueryDuration) {
+    this.maxQueryDuration = maxQueryDuration;
   }
 
   public static class DataSource {

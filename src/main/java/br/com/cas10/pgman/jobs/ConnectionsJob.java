@@ -5,7 +5,9 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.time.LocalDateTime;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.sql.DataSource;
 
@@ -19,6 +21,8 @@ import br.com.cas10.pgman.PgmanProperties;
 import br.com.cas10.pgman.SqlResourceLoader;
 import br.com.cas10.pgman.index.ConnectionsSnapshot;
 import br.com.cas10.pgman.index.ExportQueue;
+
+import io.micrometer.common.util.StringUtils;
 
 
 @Service
@@ -53,6 +57,8 @@ public class ConnectionsJob {
         List<ConnectionsSnapshot> result = this.jdbc.query(query, Collections.EMPTY_MAP, rowMapper);
         result.forEach(snapshot -> snapshot.setTimestamp(timestamp));
         exportQueue.add(result.toArray(new ConnectionsSnapshot[result.size()]));
+
+        postCollect();
     }
 
     private void collectMetaData() {
@@ -69,4 +75,14 @@ public class ConnectionsJob {
         System.out.println("Coletando Connections " + LocalDateTime.now());
     }
 
+    private void postCollect() {
+        String maxQueryDuration = pgmanProperties.getMaxQueryDuration();
+        if (!StringUtils.isBlank(maxQueryDuration)) {
+            System.out.println("Matando queries que estão durando mais que " + maxQueryDuration);
+            String query = SqlResourceLoader.getInstance().loadQuery("connections");
+            Map<String, Object> params = new HashMap<>();
+            params.put("max_duration", maxQueryDuration);
+            this.jdbc.execute(query, params, (ps) -> null);
+        }
+    }
 }

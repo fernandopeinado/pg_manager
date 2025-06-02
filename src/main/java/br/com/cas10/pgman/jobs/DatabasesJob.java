@@ -60,6 +60,7 @@ public class DatabasesJob {
             snapshot.setTupInserted(rs.getLong("tup_inserted"));
             snapshot.setTupUpdated(rs.getLong("tup_updated"));
             snapshot.setTupDeleted(rs.getLong("tup_deleted"));
+            snapshot.setDatabaseSize(rs.getLong("database_size"));
             return snapshot;
         };
 

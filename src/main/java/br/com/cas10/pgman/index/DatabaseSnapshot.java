@@ -24,6 +24,7 @@ public class DatabaseSnapshot implements IndexedContent {
     private Long tupInserted;
     private Long tupUpdated;
     private Long tupDeleted;
+    private Long databaseSize;
 
     @Override
     public long getTimestamp() {
@@ -170,6 +171,14 @@ public class DatabaseSnapshot implements IndexedContent {
         this.tupDeleted = tupDeleted;
     }
 
+    public Long getDatabaseSize() {
+        return databaseSize;
+    }
+
+    public void setDatabaseSize(Long databaseSize) {
+        this.databaseSize = databaseSize;
+    }
+
     @Override
     public Map<String, Object> toJson() {
         Map<String, Object> map = new LinkedHashMap<>();
@@ -190,6 +199,7 @@ public class DatabaseSnapshot implements IndexedContent {
         map.put("tupInserted", tupInserted);
         map.put("tupUpdated", tupUpdated);
         map.put("tupDeleted", tupDeleted);
+        map.put("databaseSize", databaseSize);
         return map;
     }
 
@@ -213,6 +223,7 @@ public class DatabaseSnapshot implements IndexedContent {
                 ",tupInserted=" + tupInserted +
                 ",tupUpdated=" + tupUpdated +
                 ",tupDeleted=" + tupDeleted +
+                ",databaseSize=" + databaseSize +
                 '}';
     }
 

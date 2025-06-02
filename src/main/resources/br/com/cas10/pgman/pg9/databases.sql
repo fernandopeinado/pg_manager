@@ -14,6 +14,7 @@ select datname
     , tup_inserted
     , tup_updated
     , tup_deleted
+    , pg_catalog.pg_database_size(datname) database_size
 from pg_stat_database
 where datname not like 'template%'
 
