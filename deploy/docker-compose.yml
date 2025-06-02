@@ -1,12 +1,11 @@
-version: '3.2'
-
+version: '3.9'
 services:
   elasticsearch:
     container_name: pgman_elasticsearch
     build:
       context: elasticsearch/
       args:
-        ELK_VERSION: 7.13.4
+        ELK_VERSION: 7.17.8
     volumes:
       - type: bind
         source: ./elasticsearch/config/elasticsearch.yml
@@ -22,6 +21,7 @@ services:
       ES_JAVA_OPTS: "-Xmx1g -Xms256m"
       ELASTIC_PASSWORD: changeme
       discovery.type: single-node
+    restart: always
     networks:
       - pgman
 
@@ -30,7 +30,7 @@ services:
     build:
       context: kibana/
       args:
-        ELK_VERSION: 7.13.4
+        ELK_VERSION: 7.17.8
     volumes:
       - type: bind
         source: ./kibana/config/kibana.yml
@@ -38,6 +38,7 @@ services:
         read_only: true
     ports:
       - "5601:5601"
+    restart: always
     networks:
       - pgman
     depends_on:
@@ -47,6 +48,7 @@ services:
     container_name: pgman
     image: "pgman:latest"
     env_file: pgman.env
+    restart: always
     networks:
       - pgman
     depends_on:
