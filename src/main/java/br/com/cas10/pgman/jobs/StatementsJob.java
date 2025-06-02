@@ -59,7 +59,7 @@ public class StatementsJob {
             result.forEach(snapshot -> snapshot.setTimestamp(timestamp));
             exportQueue.add(result.toArray(new QuerySnapshot[result.size()]));
         } finally {
-            postColelct();
+            postCollect();
         }
     }
 
@@ -77,7 +77,7 @@ public class StatementsJob {
         System.out.println("Coletando Statements " + LocalDateTime.now());
     }
 
-    private void postColelct() {
+    private void postCollect() {
         this.jdbc.queryForList("SELECT pg_stat_statements_reset();", Collections.EMPTY_MAP);
     }
 

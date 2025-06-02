@@ -8,10 +8,14 @@ public class JobsScheduler {
 
     private StatementsJob statementsJob;
     private AshJob ashJob;
+    private ConnectionsJob connectionsJob;
+    private DatabasesJob databasesJob;
 
-    public JobsScheduler(StatementsJob statementsJob, AshJob ashJob) {
+    public JobsScheduler(StatementsJob statementsJob, AshJob ashJob, ConnectionsJob connectionsJob, DatabasesJob databasesJob) {
         this.statementsJob = statementsJob;
         this.ashJob = ashJob;
+        this.connectionsJob = connectionsJob;
+        this.databasesJob = databasesJob;
     }
 
     @Scheduled(
@@ -28,4 +32,17 @@ public class JobsScheduler {
         ashJob.collect();
     }
 
+    @Scheduled(
+            initialDelayString = "${pgman.collector.connections.initialDelay:10000}",
+            fixedRateString = "${pgman.collector.connections.rate:60000}")
+    public void connectionsJob() {
+        connectionsJob.collect();
+    }
+
+    @Scheduled(
+            initialDelayString = "${pgman.collector.databases.initialDelay:10000}",
+            fixedRateString = "${pgman.collector.databases.rate:60000}")
+    public void databasesJob() {
+        databasesJob.collect();
+    }
 }

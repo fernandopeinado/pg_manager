@@ -1,4 +1,6 @@
-FROM openjdk:11.0-jre-slim-buster
+FROM eclipse-temurin:21-jre-alpine
+
+RUN apk update && apk add --no-cache bash
 
 COPY maven/ /opt/
 
