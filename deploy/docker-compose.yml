@@ -46,7 +46,8 @@ services:
 
   pgman:
     container_name: pgman
-    image: "pgman:latest"
+    #image: "pgman:2.0.0"
+    image: "pgman:2.0.0-native"
     env_file: pgman.env
     restart: always
     networks:
