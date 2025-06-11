@@ -16,7 +16,7 @@
 
     <properties>
         <elasticsearch.version>7.17.28</elasticsearch.version>
-        <postgresql_version>42.7.6</postgresql_version>
+        <postgresql_version>42.7.7</postgresql_version>
         <docker.host>unix:///var/run/docker.sock</docker.host>
     </properties>
 
