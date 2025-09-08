@@ -16,7 +16,7 @@
 
     <properties>
         <elasticsearch.version>7.17.28</elasticsearch.version>
-        <postgresql_version>42.7.6</postgresql_version>
+        <postgresql_version>42.7.7</postgresql_version>
         <docker.host>unix:///var/run/docker.sock</docker.host>
     </properties>
 
@@ -206,7 +206,13 @@
                                 </goals>
                                 <phase>package</phase>
                                 <configuration>
-                                    <buildArgs>-H:IncludeResources=.*sql$ -H:IncludeResources=.*txt$ -H:IncludeResources=.*yml$</buildArgs>
+                                    <buildArgs>
+                                        <arg>-march=x86-64-v1</arg>
+                                        <arg>-H:+UnlockExperimentalVMOptions</arg>
+                                        <arg>-H:IncludeResources=.*sql$</arg>
+                                        <arg>-H:IncludeResources=.*txt$</arg>
+                                        <arg>-H:IncludeResources=.*yml$</arg>
+                                    </buildArgs>
                                 </configuration>
                             </execution>
                         </executions>
